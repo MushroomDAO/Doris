@@ -1,0 +1,46 @@
+{
+  "name": "docsify-ai-blog-template",
+  "version": "1.0.0",
+  "description": "AI-powered blog template with Docsify and GitHub Pages",
+  "main": "index.js",
+  "scripts": {
+    "dev": "docsify serve docs",
+    "build": "node scripts/build.js",
+    "new-post": "node scripts/generate-post.js",
+    "ai-enhance": "node scripts/ai-enhance.js",
+    "archive": "node scripts/archive-monthly.js",
+    "deploy": "npm run build && npm run deploy-ipfs",
+    "deploy-ipfs": "node scripts/deploy-ipfs.js",
+    "setup": "node scripts/setup.js"
+  },
+  "dependencies": {
+    "docsify-cli": "^4.4.4",
+    "markdown-it": "^13.0.2",
+    "front-matter": "^4.0.2",
+    "moment": "^2.29.4",
+    "axios": "^1.6.0",
+    "openai": "^4.24.0",
+    "anthropic": "^0.9.0",
+    "ipfs-http-client": "^60.0.0",
+    "pinata-sdk": "^2.1.0",
+    "fs-extra": "^11.1.1",
+    "glob": "^10.3.10",
+    "yaml": "^2.3.4",
+    "inquirer": "^9.2.12",
+    "chalk": "^5.3.0",
+    "ora": "^7.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "keywords": [
+    "blog",
+    "docsify",
+    "ai",
+    "github-pages",
+    "ipfs",
+    "markdown"
+  ],
+  "author": "",
+  "license": "MIT"
+}

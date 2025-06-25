@@ -1,0 +1,114 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  schedule:
+    - cron: '0 0 1 * *'  # Monthly archiving on 1st day of each month
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+    
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: latest
+    
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile
+    
+    - name: Lint code
+      run: pnpm run lint
+      continue-on-error: true
+    
+    - name: Run tests
+      run: pnpm run test
+      continue-on-error: true
+    
+    - name: Build project
+      run: pnpm run build
+      env:
+        NODE_ENV: production
+    
+    - name: Generate AI content
+      run: pnpm run enhance:ai
+      env:
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      continue-on-error: true
+    
+    - name: Deploy to IPFS
+      run: pnpm run deploy:ipfs
+      env:
+        PINATA_API_KEY: ${{ secrets.PINATA_API_KEY }}
+        PINATA_SECRET_KEY: ${{ secrets.PINATA_SECRET_KEY }}
+      continue-on-error: true
+    
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./docs
+        publish_branch: gh-pages
+        force_orphan: true
+        user_name: 'github-actions[bot]'
+        user_email: 'github-actions[bot]@users.noreply.github.com'
+        commit_message: 'Deploy: ${{ github.event.head_commit.message }}'
+    
+    - name: Archive monthly posts
+      run: pnpm run archive:monthly
+      if: github.ref == 'refs/heads/main' && github.event_name == 'schedule'
+      continue-on-error: true
+    
+    - name: Update search index
+      run: |
+        echo "Updating search index..."
+        # TODO: Implement search index update
+      continue-on-error: true
+
+  archive:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js and pnpm
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+    
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: latest
+    
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile
+    
+    - name: Archive monthly posts
+      run: pnpm run archive:monthly
+    
+    - name: Commit changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add .
+        git diff --staged --quiet || git commit -m "Archive: Monthly posts archive update"
+        git push 
