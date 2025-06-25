@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doris Protocol Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="bg-gray-900 text-white">
+    <div class="container mx-auto p-8">
+        <h1 class="text-4xl font-bold mb-8 text-center">Doris Protocol Pro</h1>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="bg-gray-800 p-6 rounded-lg">
+                <h3 class="text-xl font-bold mb-4">AI Chat Assistant</h3>
+                <textarea id="chatInput" class="w-full bg-gray-700 p-3 rounded mb-4" placeholder="Ask AI anything..."></textarea>
+                <button onclick="sendMessage()" class="bg-blue-600 px-4 py-2 rounded w-full">Send</button>
+            </div>
+            <div class="bg-gray-800 p-6 rounded-lg">
+                <h3 class="text-xl font-bold mb-4">Content Creator</h3>
+                <input id="title" class="w-full bg-gray-700 p-3 rounded mb-4" placeholder="Title">
+                <textarea id="content" class="w-full bg-gray-700 p-3 rounded mb-4" placeholder="Content"></textarea>
+                <button onclick="createPost()" class="bg-green-600 px-4 py-2 rounded w-full">Create Post</button>
+            </div>
+            <div class="bg-gray-800 p-6 rounded-lg">
+                <h3 class="text-xl font-bold mb-4">IPFS Deploy</h3>
+                <button onclick="deployIPFS()" class="bg-purple-600 px-4 py-2 rounded w-full">Deploy to IPFS</button>
+                <div id="deployStatus" class="mt-4 text-sm text-gray-400">Ready to deploy</div>
+            </div>
+        </div>
+        <div id="messages" class="mt-8 bg-gray-800 p-6 rounded-lg h-64 overflow-y-auto"></div>
+    </div>
+    
+    <script>
+        lucide.createIcons();
+        
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message) return;
+            
+            addMessage('You: ' + message, 'user');
+            input.value = '';
+            
+            try {
+                const response = await fetch('http://localhost:3001/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message })
+                });
+                const data = await response.json();
+                
+  " class="bg-purf (data.success) {
+                    addMessage('AI: ' + data.response, 'ai');
+                } else {
+                    addMessage('AI: Error occurred', 'error');
+                }
+            } catch (error) {
+                addMessage('AI: Connection error', 'error');
+            }
+        }
+        
+        async function createPost() {
+            const title = document.getElementById('title').value;
+            const content = document.getElementById('content').value;
+            
+            if (!title || !content) {
+                addMessage('Please enter title and content', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('http://localhost:3001/api/save-post', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, content })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    addMessage('Post created successfully!', 'success');
+                    document.getElementById('title').value = '';
+                    document.getElementById('content').value = '';
+                } else {
+                    addMessage('Error creating post: ' + data.error, 'error');
+                }
+            } catch (error) {
+                addMessage('Error creating post', 'error');
+            }
+        }
+        
+        async function deployIPFS() {
+            document.getElementById('deployStatus').textContent = 'Deploying...';
+            
+            try {
+                const response = await fetch('http://localhost:3001/api/deploy-ipfs', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ provider: 'pinata' })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('deployStatus').innerHTML = 
+                        'Deployed! <a href="' + data.url + '" target="_blank" class="text-blue-400">View</a>';
+                    addMessage('IPFS deployment successful!', 'success');
+                } else {
+                    document.getElementById('deployStatus').textContent = 'Deploy failed';
+                    addMessage('IPFS deployment failed: ' + data.error, 'error');
+                }
+            } catch (error) {
+                document.getElementById('deployStatus').textContent = 'Deploy error';
+                addMessage('IPFS deployment error', 'error');
+            }
+        }
+        
+        function addMessage(text, type) {
+            const messages = document.getElementById('messages');
+            const div = document.createElement('div');
+            div.className = 'mb-2 p-2 rounded ' + 
+                (type === 'user' ? 'bg-blue-900' : 
+                 type === 'ai' ? 'bg-green-900' : 
+                 type === 'error' ? 'bg-red-900' : 'bg-gray-700');
+            div.textContent = text;
+            messages.appendChild(div);
+            messages.scrollTop = messages.scrollHeight;
+        }
+        
+        // Auto-test functionality
+        setTimeout(() => {
+            addMessage('Pro interface loaded successfully!', 'success');
+        }, 1000);
+    </script>
+</body>
+</html>

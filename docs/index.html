@@ -69,14 +69,16 @@
   <!-- Authentication UI -->
   <div class="auth-container">
     <div id="auth-status">
-      <button class="btn" onclick="login()">Login</button>
+      <button class="btn" onclick="window.open('/admin.html', '_blank')">Manage</button>
+      <button class="btn" onclick="window.open('/admin-pro.html', '_blank')">Pro Admin</button>
     </div>
   </div>
   
   <script>
     window.$docsify = {
-      name: 'Doris Protocol',
+      name: 'Doris Protocol Blog',
       repo: 'https://github.com/your-org/doris-protocol',
+      homepage: 'blog.md', // 默认显示博客页面而不是README
       loadSidebar: true,
       loadNavbar: true,
       subMaxLevel: 3,
@@ -84,7 +86,7 @@
       search: {
         maxAge: 86400000,
         paths: 'auto',
-        placeholder: 'Search...',
+        placeholder: 'Search posts...',
         noData: 'No Results',
         depth: 6
       },
@@ -110,8 +112,7 @@
         function(hook, vm) {
           // Authentication integration
           hook.init(function() {
-            console.log('Doris Protocol initialized');
-            checkAuthStatus();
+            console.log('Doris Protocol Blog initialized');
           });
           
           // Content creation hooks
@@ -124,49 +125,6 @@
           });
         }
       ]
-    }
-    
-    // Authentication functions
-    function checkAuthStatus() {
-      // Check if user is logged in
-      const user = localStorage.getItem('doris_user');
-      const authStatus = document.getElementById('auth-status');
-      
-      if (user) {
-        const userData = JSON.parse(user);
-        authStatus.innerHTML = `
-          <span>Welcome, ${userData.name}</span>
-          <button class="btn" onclick="logout()">Logout</button>
-          <button class="btn" onclick="createPost()">New Post</button>
-        `;
-      } else {
-        authStatus.innerHTML = '<button class="btn" onclick="login()">Login</button>';
-      }
-    }
-    
-    function login() {
-      // TODO: Implement Auth.js integration
-      console.log('Login clicked');
-      // For now, simulate login
-      const mockUser = {
-        id: '1',
-        name: 'Test User',
-        email: 'test@example.com',
-        avatar: 'https://avatars.githubusercontent.com/u/1?v=4'
-      };
-      localStorage.setItem('doris_user', JSON.stringify(mockUser));
-      checkAuthStatus();
-    }
-    
-    function logout() {
-      localStorage.removeItem('doris_user');
-      checkAuthStatus();
-    }
-    
-    function createPost() {
-      // TODO: Implement post creation UI
-      console.log('Create post clicked');
-      window.location.hash = '#/create';
     }
   </script>
   

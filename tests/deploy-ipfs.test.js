@@ -34,14 +34,21 @@ describe('IPFS Deployment Script', () => {
         const files = [];
         
         async function scanDirectory(dir) {
-            const entries = await fs.readdir(dir, { withFileTypes: true });
-            
-            for (const entry of entries) {
-                const fullPath = path.join(dir, entry.name);
-                if (entry.isDirectory()) {
-                    await scanDirectory(fullPath);
-                } else {
-                    files.push(fullPath);
+            try {
+                const entries = await fs.readdir(dir, { withFileTypes: true });
+                
+                for (const entry of entries) {
+                    const fullPath = path.join(dir, entry.name);
+                    if (entry.isDirectory()) {
+                        await scanDirectory(fullPath);
+                    } else {
+                        files.push(fullPath);
+                    }
+                }
+            } catch (error) {
+                // Handle directory not found gracefully
+                if (error.code !== 'ENOENT') {
+                    throw error;
                 }
             }
         }
