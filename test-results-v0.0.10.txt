@@ -1,0 +1,334 @@
+
+> doris-protocol@0.0.10 test /Users/jason/Dev/mycelium/mushroom/Doris
+> jest
+
+PASS tests/ai-enhance.test.js
+  AI Enhancement Script
+    ✓ should enhance title successfully (15 ms)
+    ✓ should add summary to content (3 ms)
+    ✓ should generate relevant tags (31 ms)
+    ✓ should handle missing environment variables gracefully (5 ms)
+    ✓ should validate file existence before processing (2 ms)
+    ✓ should preserve markdown structure during enhancement (2 ms)
+    ✓ should handle special characters in content (5 ms)
+    ✓ should provide meaningful error messages for API failures (3 ms)
+
+PASS tests/generate-post.test.js
+  Generate Post Script
+    ✓ should generate a post with valid title and content (54 ms)
+    ✓ should create proper directory structure (10 ms)
+    ✓ should generate different templates based on type (11 ms)
+    ✓ should create valid filename from title (5 ms)
+
+PASS tests/deploy-ipfs.test.js
+  IPFS Deployment Script
+    ✓ should identify all files to upload (24 ms)
+    ✓ should calculate total file size correctly (10 ms)
+    ✓ should validate environment variables (8 ms)
+    ✓ should generate valid IPFS hash format (7 ms)
+    ✓ should handle file upload errors gracefully (8 ms)
+    ✓ should exclude unnecessary files from upload (8 ms)
+    ✓ should generate deployment summary (8 ms)
+    ✓ should verify successful deployment (6 ms)
+    ✓ should handle different IPFS providers (11 ms)
+
+FAIL tests/web-automation.test.js (7.806 s)
+  Web Interface Automation Tests
+    Admin Interface Tests
+      ✕ should load admin page successfully (264 ms)
+      ✕ should have functional navigation tabs (234 ms)
+      ✕ should handle form inputs correctly (166 ms)
+    Pro Interface Tests
+      ✕ should load pro admin page successfully (159 ms)
+      ✕ should test AI chat functionality (185 ms)
+      ✕ should test content creation functionality (184 ms)
+      ✕ should test IPFS deployment functionality (183 ms)
+    Performance Tests
+      ✕ should load pages within acceptable time (173 ms)
+      ✕ should handle multiple rapid clicks (157 ms)
+    Responsive Design Tests
+      ✕ should work on mobile viewport (261 ms)
+      ✕ should work on tablet viewport (235 ms)
+    Accessibility Tests
+      ✕ should have proper heading structure (207 ms)
+      ✕ should have accessible form elements (189 ms)
+    Error Handling Tests
+      ✕ should handle network errors gracefully (173 ms)
+      ✕ should validate required fields (162 ms)
+
+  ● Web Interface Automation Tests › Admin Interface Tests › should load admin page successfully
+
+    net::ERR_CONNECTION_REFUSED at http://localhost:3001/admin.html
+
+      65 |     describe('Admin Interface Tests', () => {
+      66 |         it('should load admin page successfully', async () => {
+    > 67 |             await page.goto(`${BASE_URL}/admin.html`);
+         |             ^
+      68 |             
+      69 |             // Wait for page to load
+      70 |             await page.waitForSelector('h1');
+
+      at navigate (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/cdp/Frame.ts:213:13)
+      at Function.race (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/util/Deferred.ts:49:14)
+      at CdpFrame.goto (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/cdp/Frame.ts:166:17)
+      at CdpPage.goto (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/api/Page.ts:1730:12)
+      at Object.<anonymous> (tests/web-automation.test.js:67:13)
+
+  ● Web Interface Automation Tests › Admin Interface Tests › should have functional navigation tabs
+
+    net::ERR_CONNECTION_REFUSED at http://localhost:3001/admin.html
+
+      80 |         
+      81 |         it('should have functional navigation tabs', async () => {
+    > 82 |             await page.goto(`${BASE_URL}/admin.html`);
+         |             ^
+      83 |             
+      84 |             // Wait for tabs to be available
+      85 |             await page.waitForSelector('[data-tab]');
+
+      at navigate (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/cdp/Frame.ts:213:13)
+      at Function.race (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/util/Deferred.ts:49:14)
+      at CdpFrame.goto (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/cdp/Frame.ts:166:17)
+      at CdpPage.goto (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/api/Page.ts:1730:12)
+      at Object.<anonymous> (tests/web-automation.test.js:82:13)
+
+  ● Web Interface Automation Tests › Admin Interface Tests › should handle form inputs correctly
+
+    net::ERR_CONNECTION_REFUSED at http://localhost:3001/admin.html
+
+      103 |         
+      104 |         it('should handle form inputs correctly', async () => {
+    > 105 |             await page.goto(`${BASE_URL}/admin.html`);
+          |             ^
+      106 |             
+      107 |             // Test title input
+      108 |             const titleSelector = 'input[placeholder*="title"], #postTitle, #title';
+
+      at navigate (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/cdp/Frame.ts:213:13)
+      at Function.race (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/util/Deferred.ts:49:14)
+      at CdpFrame.goto (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/cdp/Frame.ts:166:17)
+      at CdpPage.goto (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/api/Page.ts:1730:12)
+      at Object.<anonymous> (tests/web-automation.test.js:105:13)
+
+  ● Web Interface Automation Tests › Pro Interface Tests › should load pro admin page successfully
+
+    net::ERR_CONNECTION_REFUSED at http://localhost:3001/admin-pro.html
+
+      125 |     describe('Pro Interface Tests', () => {
+      126 |         it('should load pro admin page successfully', async () => {
+    > 127 |             await page.goto(`${BASE_URL}/admin-pro.html`);
+          |             ^
+      128 |             
+      129 |             // Wait for page to load
+      130 |             await page.waitForSelector('h1');
+
+      at navigate (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/cdp/Frame.ts:213:13)
+      at Function.race (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/util/Deferred.ts:49:14)
+      at CdpFrame.goto (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/cdp/Frame.ts:166:17)
+      at CdpPage.goto (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/api/Page.ts:1730:12)
+      at Object.<anonymous> (tests/web-automation.test.js:127:13)
+
+  ● Web Interface Automation Tests › Pro Interface Tests › should test AI chat functionality
+
+    net::ERR_CONNECTION_REFUSED at http://localhost:3001/admin-pro.html
+
+      140 |         
+      141 |         it('should test AI chat functionality', async () => {
+    > 142 |             await page.goto(`${BASE_URL}/admin-pro.html`);
+          |             ^
+      143 |             
+      144 |             // Wait for chat input
+      145 |             await page.waitForSelector('#chatInput');
+
+      at navigate (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/cdp/Frame.ts:213:13)
+      at Function.race (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/util/Deferred.ts:49:14)
+      at CdpFrame.goto (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/cdp/Frame.ts:166:17)
+      at CdpPage.goto (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/api/Page.ts:1730:12)
+      at Object.<anonymous> (tests/web-automation.test.js:142:13)
+
+  ● Web Interface Automation Tests › Pro Interface Tests › should test content creation functionality
+
+    net::ERR_CONNECTION_REFUSED at http://localhost:3001/admin-pro.html
+
+      160 |         
+      161 |         it('should test content creation functionality', async () => {
+    > 162 |             await page.goto(`${BASE_URL}/admin-pro.html`);
+          |             ^
+      163 |             
+      164 |             // Fill in the form
+      165 |             await page.type('#title', 'Automated Test Post');
+
+      at navigate (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/cdp/Frame.ts:213:13)
+      at Function.race (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/util/Deferred.ts:49:14)
+      at CdpFrame.goto (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/cdp/Frame.ts:166:17)
+      at CdpPage.goto (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/api/Page.ts:1730:12)
+      at Object.<anonymous> (tests/web-automation.test.js:162:13)
+
+  ● Web Interface Automation Tests › Pro Interface Tests › should test IPFS deployment functionality
+
+    net::ERR_CONNECTION_REFUSED at http://localhost:3001/admin-pro.html
+
+      180 |         
+      181 |         it('should test IPFS deployment functionality', async () => {
+    > 182 |             await page.goto(`${BASE_URL}/admin-pro.html`);
+          |             ^
+      183 |             
+      184 |             // Click deploy button
+      185 |             await page.click('button[onclick="deployIPFS()"]');
+
+      at navigate (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/cdp/Frame.ts:213:13)
+      at Function.race (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/util/Deferred.ts:49:14)
+      at CdpFrame.goto (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/cdp/Frame.ts:166:17)
+      at CdpPage.goto (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/api/Page.ts:1730:12)
+      at Object.<anonymous> (tests/web-automation.test.js:182:13)
+
+  ● Web Interface Automation Tests › Performance Tests › should load pages within acceptable time
+
+    net::ERR_CONNECTION_REFUSED at http://localhost:3001/admin-pro.html
+
+      198 |             const startTime = Date.now();
+      199 |             
+    > 200 |             await page.goto(`${BASE_URL}/admin-pro.html`);
+          |             ^
+      201 |             await page.waitForSelector('h1');
+      202 |             
+      203 |             const loadTime = Date.now() - startTime;
+
+      at navigate (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/cdp/Frame.ts:213:13)
+      at Function.race (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/util/Deferred.ts:49:14)
+      at CdpFrame.goto (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/cdp/Frame.ts:166:17)
+      at CdpPage.goto (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/api/Page.ts:1730:12)
+      at Object.<anonymous> (tests/web-automation.test.js:200:13)
+
+  ● Web Interface Automation Tests › Performance Tests › should handle multiple rapid clicks
+
+    net::ERR_CONNECTION_REFUSED at http://localhost:3001/admin-pro.html
+
+      208 |         
+      209 |         it('should handle multiple rapid clicks', async () => {
+    > 210 |             await page.goto(`${BASE_URL}/admin-pro.html`);
+          |             ^
+      211 |             
+      212 |             // Rapidly click the deploy button multiple times
+      213 |             for (let i = 0; i < 5; i++) {
+
+      at navigate (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/cdp/Frame.ts:213:13)
+      at Function.race (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/util/Deferred.ts:49:14)
+      at CdpFrame.goto (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/cdp/Frame.ts:166:17)
+      at CdpPage.goto (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/api/Page.ts:1730:12)
+      at Object.<anonymous> (tests/web-automation.test.js:210:13)
+
+  ● Web Interface Automation Tests › Responsive Design Tests › should work on mobile viewport
+
+    net::ERR_CONNECTION_REFUSED at http://localhost:3001/admin-pro.html
+
+      227 |             await page.setViewport({ width: 375, height: 667 }); // iPhone size
+      228 |             
+    > 229 |             await page.goto(`${BASE_URL}/admin-pro.html`);
+          |             ^
+      230 |             await page.waitForSelector('h1');
+      231 |             
+      232 |             // Check if page still renders properly
+
+      at navigate (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/cdp/Frame.ts:213:13)
+      at Function.race (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/util/Deferred.ts:49:14)
+      at CdpFrame.goto (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/cdp/Frame.ts:166:17)
+      at CdpPage.goto (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/api/Page.ts:1730:12)
+      at Object.<anonymous> (tests/web-automation.test.js:229:13)
+
+  ● Web Interface Automation Tests › Responsive Design Tests › should work on tablet viewport
+
+    net::ERR_CONNECTION_REFUSED at http://localhost:3001/admin-pro.html
+
+      242 |             await page.setViewport({ width: 768, height: 1024 }); // iPad size
+      243 |             
+    > 244 |             await page.goto(`${BASE_URL}/admin-pro.html`);
+          |             ^
+      245 |             await page.waitForSelector('h1');
+      246 |             
+      247 |             // Check if layout adapts properly
+
+      at navigate (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/cdp/Frame.ts:213:13)
+      at Function.race (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/util/Deferred.ts:49:14)
+      at CdpFrame.goto (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/cdp/Frame.ts:166:17)
+      at CdpPage.goto (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/api/Page.ts:1730:12)
+      at Object.<anonymous> (tests/web-automation.test.js:244:13)
+
+  ● Web Interface Automation Tests › Accessibility Tests › should have proper heading structure
+
+    net::ERR_CONNECTION_REFUSED at http://localhost:3001/admin-pro.html
+
+      253 |     describe('Accessibility Tests', () => {
+      254 |         it('should have proper heading structure', async () => {
+    > 255 |             await page.goto(`${BASE_URL}/admin-pro.html`);
+          |             ^
+      256 |             
+      257 |             const h1Elements = await page.$$('h1');
+      258 |             expect(h1Elements.length).toBeGreaterThanOrEqual(1);
+
+      at navigate (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/cdp/Frame.ts:213:13)
+      at Function.race (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/util/Deferred.ts:49:14)
+      at CdpFrame.goto (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/cdp/Frame.ts:166:17)
+      at CdpPage.goto (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/api/Page.ts:1730:12)
+      at Object.<anonymous> (tests/web-automation.test.js:255:13)
+
+  ● Web Interface Automation Tests › Accessibility Tests › should have accessible form elements
+
+    net::ERR_CONNECTION_REFUSED at http://localhost:3001/admin-pro.html
+
+      263 |         
+      264 |         it('should have accessible form elements', async () => {
+    > 265 |             await page.goto(`${BASE_URL}/admin-pro.html`);
+          |             ^
+      266 |             
+      267 |             // Check if form inputs have labels or placeholders
+      268 |             const inputs = await page.$$('input, textarea');
+
+      at navigate (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/cdp/Frame.ts:213:13)
+      at Function.race (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/util/Deferred.ts:49:14)
+      at CdpFrame.goto (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/cdp/Frame.ts:166:17)
+      at CdpPage.goto (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/api/Page.ts:1730:12)
+      at Object.<anonymous> (tests/web-automation.test.js:265:13)
+
+  ● Web Interface Automation Tests › Error Handling Tests › should handle network errors gracefully
+
+    net::ERR_CONNECTION_REFUSED at http://localhost:3001/admin-pro.html
+
+      283 |     describe('Error Handling Tests', () => {
+      284 |         it('should handle network errors gracefully', async () => {
+    > 285 |             await page.goto(`${BASE_URL}/admin-pro.html`);
+          |             ^
+      286 |             
+      287 |             // Disable network to simulate offline
+      288 |             await page.setOfflineMode(true);
+
+      at navigate (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/cdp/Frame.ts:213:13)
+      at Function.race (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/util/Deferred.ts:49:14)
+      at CdpFrame.goto (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/cdp/Frame.ts:166:17)
+      at CdpPage.goto (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/api/Page.ts:1730:12)
+      at Object.<anonymous> (tests/web-automation.test.js:285:13)
+
+  ● Web Interface Automation Tests › Error Handling Tests › should validate required fields
+
+    net::ERR_CONNECTION_REFUSED at http://localhost:3001/admin-pro.html
+
+      303 |         
+      304 |         it('should validate required fields', async () => {
+    > 305 |             await page.goto(`${BASE_URL}/admin-pro.html`);
+          |             ^
+      306 |             
+      307 |             // Try to create post without title/content
+      308 |             await page.click('button[onclick="createPost()"]');
+
+      at navigate (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/cdp/Frame.ts:213:13)
+      at Function.race (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/util/Deferred.ts:49:14)
+      at CdpFrame.goto (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/cdp/Frame.ts:166:17)
+      at CdpPage.goto (node_modules/.pnpm/puppeteer-core@24.10.2/node_modules/puppeteer-core/src/api/Page.ts:1730:12)
+      at Object.<anonymous> (tests/web-automation.test.js:305:13)
+
+Test Suites: 1 failed, 3 passed, 4 total
+Tests:       15 failed, 21 passed, 36 total
+Snapshots:   0 total
+Time:        8.354 s, estimated 12 s
+Ran all test suites.
+ ELIFECYCLE  Test failed. See above for more details.
