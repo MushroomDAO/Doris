@@ -14,6 +14,72 @@ Doris Protocol is a decentralized content creation and publishing platform that 
 
 ## System Architecture
 
+### Overview
+Doris Protocol implements a **Local First** design philosophy, ensuring core functionality works completely offline while providing optional cloud services for enhanced features.
+
+### Architecture Diagram
+
+```mermaid
+graph TB
+    subgraph "Frontend Layer"
+        A[CLI Interface]
+        B[Web Admin Panel]
+        C[Docsify Blog Interface]
+        D[Live Preview]
+    end
+    
+    subgraph "Application Layer"
+        E[Content Manager]
+        F[AI Service Layer]
+        G[Deployment Service]
+    end
+    
+    subgraph "Data Layer"
+        H[Local Markdown Files]
+        I[Configuration Files]
+        J[Templates]
+        K[Assets & Media]
+    end
+    
+    subgraph "Optional Services"
+        L[OpenAI API / Ollama]
+        M[Anthropic API / Local AI]
+        N[Pinata IPFS / Local Node]
+        O[Web3.Storage / IPFS]
+        P[GitHub API]
+    end
+    
+    subgraph "Deployment Targets"
+        Q[GitHub Pages]
+        R[IPFS Network]
+        S[Local Server]
+    end
+    
+    %% Core functionality (always works)
+    A --> D
+    B --> H
+    C --> E
+    D --> E
+    E --> H
+    
+    %% Optional enhancements
+    F -.-> L
+    F -.-> M
+    G -.-> N
+    G -.-> O
+    G -.-> P
+    
+    %% Deployment options
+    G --> Q
+    G --> R
+    G --> S
+    
+    style H fill:#4caf50
+    style E fill:#4caf50
+    style D fill:#4caf50
+    style A fill:#4caf50
+```
+
 ### Core Components
 
 #### 1. Content Carrier (内容载体)

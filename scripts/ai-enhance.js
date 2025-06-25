@@ -13,9 +13,17 @@ dotenv.config();
 
 class AIEnhancer {
   constructor() {
-    this.openai = new OpenAI({
+    // Support for custom OpenAI-compatible APIs (like DeepSeek via SiliconFlow)
+    const openaiConfig = {
       apiKey: process.env.OPENAI_API_KEY
-    });
+    };
+    
+    // If custom API URL is provided, use it
+    if (process.env.API_URL) {
+      openaiConfig.baseURL = process.env.API_URL;
+    }
+    
+    this.openai = new OpenAI(openaiConfig);
     
     this.anthropic = new Anthropic({
       apiKey: process.env.ANTHROPIC_API_KEY

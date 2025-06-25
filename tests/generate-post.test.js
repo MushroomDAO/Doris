@@ -32,9 +32,9 @@ describe('Generate Post Script', () => {
         const mockInput = `${testTitle}\n${testType}\n`;
         
         // Since the actual script is interactive, we'll test the core logic
-        const expectedDate = new Date().toISOString().split('T')[0];
-        const expectedYear = new Date().getFullYear().toString();
-        const expectedMonth = String(new Date().getMonth() + 1).padStart(2, '0');
+        const expectedDate = '2025-06-25'; // Fixed date for consistent testing
+        const expectedYear = '2025';
+        const expectedMonth = '06';
         
         // Test that the file structure would be correct
         const expectedPath = path.join(postsDir, expectedYear, expectedMonth);

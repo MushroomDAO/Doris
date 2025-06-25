@@ -17,17 +17,21 @@ const __dirname = path.dirname(__filename);
 const rootDir = path.join(__dirname, '..');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(rootDir, 'docs')));
 
-// Initialize AI clients
+// Initialize AI clients with support for custom API URLs
 let openai, anthropic;
 if (process.env.OPENAI_API_KEY) {
-    openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    const openaiConfig = { apiKey: process.env.OPENAI_API_KEY };
+    if (process.env.API_URL) {
+        openaiConfig.baseURL = process.env.API_URL;
+    }
+    openai = new OpenAI(openaiConfig);
 }
 if (process.env.ANTHROPIC_API_KEY) {
     anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
