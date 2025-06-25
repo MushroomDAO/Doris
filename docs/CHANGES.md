@@ -189,3 +189,61 @@ pnpm run deploy:ipfs
 5. ✅ Performance optimization
 6. ✅ Template repository creation
 7. ✅ Release deployment 
+## Version 0.2.0 - Web Interface & Architecture Update (2024-12-26)
+
+### 🎨 Major New Features
+- **Web Admin Interface**: Complete browser-based content management system
+- **Express API Server**: RESTful backend with full CRUD operations  
+- **Auto-updating Sidebar**: Dynamic navigation based on content scanning
+- **System Architecture**: Modular design with clear component separation
+- **Environment Management**: Comprehensive .env setup with detailed guides
+
+### 🔧 Technical Improvements
+- **Dual Interface**: Both CLI and Web interfaces for content management
+- **Real-time Preview**: Live markdown rendering and Docsify integration
+- **API-driven Architecture**: RESTful endpoints for all operations
+- **Automated Navigation**: Smart sidebar generation from content structure
+- **Enhanced Error Handling**: Better user feedback and troubleshooting
+
+### �� Restructured Project Layout
+```
+doris-protocol/
+├── src/                   # Source code (server, services)
+├── docs/                  # Docsify frontend + content
+│   ├── admin.html        # Web management interface
+│   ├── posts/            # Blog content by year/month
+│   └── _sidebar.md       # Auto-generated navigation
+├── scripts/               # CLI automation tools
+├── config/                # Configuration management
+├── templates/             # Content templates
+└── .env.example          # Environment setup guide
+```
+
+### 🌐 Web Interface Features
+- **Content Creation**: Browser-based post creation with templates
+- **AI Enhancement**: Web UI for AI content improvement
+- **Live Preview**: Side-by-side markdown and rendered view
+- **Deployment Tools**: One-click GitHub and IPFS deployment
+- **Post Management**: Full CRUD operations with file browser
+
+### ⚙️ Enhanced CLI Commands
+```bash
+pnpm run dev              # Start web server + admin interface
+pnpm run update:sidebar   # Regenerate navigation from content
+pnpm run server           # API server only
+pnpm run serve:docs       # Docsify-only mode
+```
+
+### 🎯 System Architecture
+- **Layered Design**: Frontend → API → Services → External APIs
+- **Modular Components**: Separate concerns for maintainability
+- **File-based Communication**: Markdown files as data source
+- **Event-driven Updates**: Automatic sidebar regeneration
+
+### 🚀 Migration from v0.1.0
+Users upgrading from v0.1.0:
+1. Run `pnpm install` to get new dependencies
+2. Copy `.env.example` to `.env` and configure
+3. Use `pnpm run dev` for the new web interface
+4. All existing CLI commands remain functional
+

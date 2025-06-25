@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doris Protocol - Content Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.24.1/themes/prism.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.24.1/components/prism-core.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.24.1/plugins/autoloader/prism-autoloader.min.js"></script>
+    <style>
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .tab-button.active { background-color: #3b82f6; color: white; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto p-6">
+        <!-- Header -->
+        <header class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Doris Protocol</h1>
+            <p class="text-gray-600">Content Management Dashboard</p>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <div class="bg-white rounded-lg shadow-md mb-6">
+            <div class="flex border-b">
+                <button class="tab-button active px-6 py-3 rounded-tl-lg focus:outline-none" data-tab="create">
+                    📝 Create Content
+                </button>
+                <button class="tab-button px-6 py-3 focus:outline-none" data-tab="enhance">
+                    🤖 AI Enhance
+                </button>
+                <button class="tab-button px-6 py-3 focus:outline-none" data-tab="preview">
+                    👁️ Preview
+                </button>
+                <button class="tab-button px-6 py-3 focus:outline-none" data-tab="deploy">
+                    🚀 Deploy
+                </button>
+                <button class="tab-button px-6 py-3 rounded-tr-lg focus:outline-none" data-tab="manage">
+                    📁 Manage Posts
+                </button>
+            </div>
+
+            <!-- Create Content Tab -->
+            <div id="create" class="tab-content active p-6">
+                <h2 class="text-2xl font-semibold mb-4">Create New Content</h2>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Template Type</label>
+                        <select id="templateType" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
+                            <option value="daily">Daily Post</option>
+                            <option value="weekly">Weekly Summary</option>
+                            <option value="tech">Tech Article</option>
+                            <option value="thoughts">Random Thoughts</option>
+                            <option value="book-notes">Book Notes</option>
+                            <option value="project-update">Project Update</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                        <input type="text" id="postTitle" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" placeholder="Enter post title">
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Content</label>
+                    <textarea id="postContent" rows="15" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" placeholder="Write your content here..."></textarea>
+                </div>
+
+                <div class="mt-6 flex gap-3">
+                    <button onclick="generatePost()" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-md transition duration-200">
+                        Generate Template
+                    </button>
+                    <button onclick="savePost()" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-md transition duration-200">
+                        Save Post
+                    </button>
+                </div>
+            </div>
+
+            <!-- AI Enhance Tab -->
+            <div id="enhance" class="tab-content p-6">
+                <h2 class="text-2xl font-semibold mb-4">AI Content Enhancement</h2>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Select Post</label>
+                        <select id="enhancePostSelect" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
+                            <option value="">Loading posts...</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">AI Provider</label>
+                        <select id="aiProvider" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
+                            <option value="openai">OpenAI GPT-4</option>
+                            <option value="anthropic">Anthropic Claude</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Enhancement Options</label>
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                        <label class="flex items-center">
+                            <input type="checkbox" id="improveTitle" checked class="mr-2">
+                            <span>Improve Title</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" id="addSummary" checked class="mr-2">
+                            <span>Add Summary</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" id="generateTags" checked class="mr-2">
+                            <span>Generate Tags</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" id="improveContent" class="mr-2">
+                            <span>Improve Content</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <button onclick="enhanceContent()" class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-md transition duration-200">
+                        🤖 Enhance with AI
+                    </button>
+                </div>
+
+                <div id="enhanceResult" class="mt-6 hidden">
+                    <h3 class="text-lg font-medium mb-3">Enhancement Result</h3>
+                    <div class="bg-gray-50 p-4 rounded-md">
+                        <pre id="enhanceOutput" class="whitespace-pre-wrap"></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preview Tab -->
+            <div id="preview" class="tab-content p-6">
+                <h2 class="text-2xl font-semibold mb-4">Preview Content</h2>
+                
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Select Post</label>
+                    <select id="previewPostSelect" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
+                        <option value="">Loading posts...</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-lg font-medium mb-3">Raw Markdown</h3>
+                        <div class="bg-gray-50 p-4 rounded-md h-96 overflow-auto">
+                            <pre id="rawMarkdown" class="text-sm"></pre>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-medium mb-3">Rendered Preview</h3>
+                        <div id="renderedContent" class="bg-white p-4 rounded-md border h-96 overflow-auto prose max-w-none"></div>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <button onclick="openInDocsify()" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-md transition duration-200">
+                        Open in Docsify
+                    </button>
+                </div>
+            </div>
+
+            <!-- Deploy Tab -->
+            <div id="deploy" class="tab-content p-6">
+                <h2 class="text-2xl font-semibold mb-4">Deploy Content</h2>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-blue-50 p-6 rounded-lg">
+                        <h3 class="text-lg font-semibold mb-3">📄 GitHub Pages</h3>
+                        <p class="text-gray-600 mb-4">Automatic deployment via Git push</p>
+                        <button onclick="deployGitHub()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md">
+                            Deploy to GitHub
+                        </button>
+                    </div>
+                    
+                    <div class="bg-purple-50 p-6 rounded-lg">
+                        <h3 class="text-lg font-semibold mb-3">🌐 IPFS</h3>
+                        <p class="text-gray-600 mb-4">Decentralized deployment</p>
+                        <button onclick="deployIPFS()" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-md">
+                            Deploy to IPFS
+                        </button>
+                    </div>
+                </div>
+
+                <div id="deploymentStatus" class="mt-6 hidden">
+                    <h3 class="text-lg font-medium mb-3">Deployment Status</h3>
+                    <div class="bg-gray-50 p-4 rounded-md">
+                        <pre id="deployOutput" class="whitespace-pre-wrap text-sm"></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Manage Posts Tab -->
+            <div id="manage" class="tab-content p-6">
+                <h2 class="text-2xl font-semibold mb-4">Manage Posts</h2>
+                
+                <div class="mb-4">
+                    <button onclick="refreshPosts()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md">
+                        🔄 Refresh
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-lg overflow-hidden">
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="postsTable" class="divide-y divide-gray-200">
+                            <!-- Posts will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include Marked.js for Markdown rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <script>
+        // Tab switching functionality
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const tabId = button.getAttribute('data-tab');
+                
+                // Hide all tab contents
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                
+                // Remove active class from all buttons
+                document.querySelectorAll('.tab-button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                // Show selected tab content
+                document.getElementById(tabId).classList.add('active');
+                button.classList.add('active');
+                
+                // Load data for specific tabs
+                if (tabId === 'enhance' || tabId === 'preview') {
+                    loadPosts();
+                } else if (tabId === 'manage') {
+                    refreshPosts();
+                }
+            });
+        });
+
+        // Content creation functions
+        async function generatePost() {
+            const templateType = document.getElementById('templateType').value;
+            const title = document.getElementById('postTitle').value;
+            
+            try {
+                const response = await fetch('/api/generate-post', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ templateType, title })
+                });
+                
+                const result = await response.json();
+                document.getElementById('postContent').value = result.content;
+            } catch (error) {
+                alert('Error generating post: ' + error.message);
+            }
+        }
+
+        async function savePost() {
+            const title = document.getElementById('postTitle').value;
+            const content = document.getElementById('postContent').value;
+            
+            if (!title || !content) {
+                alert('Please fill in both title and content');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/save-post', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, content })
+                });
+                
+                const result = await response.json();
+                alert('Post saved successfully!');
+                loadPosts(); // Refresh post lists
+            } catch (error) {
+                alert('Error saving post: ' + error.message);
+            }
+        }
+
+        // AI enhancement functions
+        async function enhanceContent() {
+            const postFile = document.getElementById('enhancePostSelect').value;
+            const provider = document.getElementById('aiProvider').value;
+            
+            if (!postFile) {
+                alert('Please select a post to enhance');
+                return;
+            }
+            
+            const options = {
+                improveTitle: document.getElementById('improveTitle').checked,
+                addSummary: document.getElementById('addSummary').checked,
+                generateTags: document.getElementById('generateTags').checked,
+                improveContent: document.getElementById('improveContent').checked
+            };
+            
+            try {
+                document.getElementById('enhanceResult').classList.remove('hidden');
+                document.getElementById('enhanceOutput').textContent = 'Enhancing content...';
+                
+                const response = await fetch('/api/enhance-content', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ postFile, provider, options })
+                });
+                
+                const result = await response.json();
+                document.getElementById('enhanceOutput').textContent = result.enhancedContent;
+            } catch (error) {
+                document.getElementById('enhanceOutput').textContent = 'Error: ' + error.message;
+            }
+        }
+
+        // Preview functions
+        async function loadPosts() {
+            try {
+                const response = await fetch('/api/posts');
+                const posts = await response.json();
+                
+                const enhanceSelect = document.getElementById('enhancePostSelect');
+                const previewSelect = document.getElementById('previewPostSelect');
+                
+                [enhanceSelect, previewSelect].forEach(select => {
+                    select.innerHTML = '<option value="">Select a post...</option>';
+                    posts.forEach(post => {
+                        const option = document.createElement('option');
+                        option.value = post.file;
+                        option.textContent = post.title;
+                        select.appendChild(option);
+                    });
+                });
+                
+            } catch (error) {
+                console.error('Error loading posts:', error);
+            }
+        }
+
+        document.getElementById('previewPostSelect').addEventListener('change', async (e) => {
+            const postFile = e.target.value;
+            if (!postFile) return;
+            
+            try {
+                const response = await fetch(`/api/post-content?file=${encodeURIComponent(postFile)}`);
+                const data = await response.json();
+                
+                document.getElementById('rawMarkdown').textContent = data.content;
+                document.getElementById('renderedContent').innerHTML = marked.parse(data.content);
+            } catch (error) {
+                console.error('Error loading post content:', error);
+            }
+        });
+
+        function openInDocsify() {
+            window.open('/docs/', '_blank');
+        }
+
+        // Deployment functions
+        async function deployGitHub() {
+            try {
+                document.getElementById('deploymentStatus').classList.remove('hidden');
+                document.getElementById('deployOutput').textContent = 'Deploying to GitHub Pages...';
+                
+                const response = await fetch('/api/deploy-github', { method: 'POST' });
+                const result = await response.json();
+                
+                document.getElementById('deployOutput').textContent = result.output;
+            } catch (error) {
+                document.getElementById('deployOutput').textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function deployIPFS() {
+            try {
+                document.getElementById('deploymentStatus').classList.remove('hidden');
+                document.getElementById('deployOutput').textContent = 'Deploying to IPFS...';
+                
+                const response = await fetch('/api/deploy-ipfs', { method: 'POST' });
+                const result = await response.json();
+                
+                document.getElementById('deployOutput').textContent = result.output;
+            } catch (error) {
+                document.getElementById('deployOutput').textContent = 'Error: ' + error.message;
+            }
+        }
+
+        // Post management functions
+        async function refreshPosts() {
+            try {
+                const response = await fetch('/api/posts');
+                const posts = await response.json();
+                
+                const tbody = document.getElementById('postsTable');
+                tbody.innerHTML = '';
+                
+                posts.forEach(post => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            ${post.title}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            ${post.date}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            ${post.type}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button onclick="editPost('${post.file}')" class="text-blue-600 hover:text-blue-900 mr-3">Edit</button>
+                            <button onclick="deletePost('${post.file}')" class="text-red-600 hover:text-red-900">Delete</button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                
+            } catch (error) {
+                console.error('Error loading posts:', error);
+            }
+        }
+
+        async function editPost(file) {
+            // Switch to create tab and load post content for editing
+            document.querySelector('[data-tab="create"]').click();
+            
+            try {
+                const response = await fetch(`/api/post-content?file=${encodeURIComponent(file)}`);
+                const data = await response.json();
+                
+                document.getElementById('postTitle').value = data.title;
+                document.getElementById('postContent').value = data.content;
+            } catch (error) {
+                alert('Error loading post for editing: ' + error.message);
+            }
+        }
+
+        async function deletePost(file) {
+            if (!confirm('Are you sure you want to delete this post?')) return;
+            
+            try {
+                const response = await fetch('/api/delete-post', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ file })
+                });
+                
+                if (response.ok) {
+                    alert('Post deleted successfully');
+                    refreshPosts();
+                }
+            } catch (error) {
+                alert('Error deleting post: ' + error.message);
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPosts();
+        });
+    </script>
+</body>
+</html> 
