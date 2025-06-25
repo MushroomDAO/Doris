@@ -1,6 +1,6 @@
 {
   "name": "doris-protocol",
-  "version": "0.1.0",
+  "version": "0.0.9",
   "description": "A decentralized content creation and publishing platform",
   "main": "index.js",
   "type": "module",

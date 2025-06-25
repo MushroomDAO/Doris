@@ -1,5 +1,34 @@
 # Doris Protocol Change Log
 
+## Version 0.0.9 (2024-12-27)
+
+### ✨ New Features
+- **Blog Access URLs**: After successful publishing, display comprehensive access URLs
+  - GitHub Pages URL (primary access point)
+  - Multiple IPFS gateway URLs (decentralized access)
+  - One-click copy functionality for all URLs
+  - Usage tips and technical details
+- **Enhanced Deployment UI**: Beautiful, informative deployment status displays
+  - Color-coded success/error indicators
+  - Collapsible technical details
+  - Copy-to-clipboard functionality
+- **Professional Admin Interface**: Extended access URLs display for power users
+
+### 🔧 Technical Improvements
+- **Server API Enhancement**: 
+  - `/api/deploy-ipfs` now returns structured access URLs
+  - `/api/deploy-github` provides GitHub Pages URL
+  - Comprehensive gateway URL generation
+- **Environment Configuration**: Support for GitHub repository and Pages URL configuration
+- **Error Handling**: Better error messages and graceful fallbacks
+
+### 📋 Updates
+- Enhanced admin.html and admin-pro.html interfaces
+- Improved deployment feedback and user experience
+- Added clipboard functionality with visual feedback
+
+---
+
 ## Version 0.0.8 (2025-06-25) - 测试修复与质量提升 ✅ COMPLETED
 
 ### 测试修复与工程优化

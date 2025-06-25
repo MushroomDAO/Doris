@@ -401,7 +401,34 @@
                 const response = await fetch('/api/deploy-github', { method: 'POST' });
                 const result = await response.json();
                 
-                document.getElementById('deployOutput').textContent = result.output;
+                if (result.success && result.githubPagesUrl) {
+                    // Create formatted display with access URLs
+                    const deployStatusDiv = document.getElementById('deploymentStatus');
+                    deployStatusDiv.innerHTML = `
+                        <h3 class="text-lg font-medium mb-3 text-green-600">✅ GitHub Pages Deployment Successful!</h3>
+                        <div class="bg-green-50 border border-green-200 p-4 rounded-md mb-4">
+                            <h4 class="font-semibold text-green-800 mb-2">🔗 Blog Access URL:</h4>
+                            <div class="bg-white p-3 rounded border">
+                                <a href="${result.githubPagesUrl}" target="_blank" 
+                                   class="text-blue-600 hover:text-blue-800 font-medium underline">
+                                    ${result.githubPagesUrl}
+                                </a>
+                                <button onclick="copyToClipboard('${result.githubPagesUrl}')" 
+                                        class="ml-2 text-sm bg-blue-100 hover:bg-blue-200 px-2 py-1 rounded">
+                                    Copy
+                                </button>
+                            </div>
+                            <p class="text-sm text-green-700 mt-2">
+                                ⏳ Note: GitHub Pages deployment may take 2-5 minutes to go live.
+                            </p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-md">
+                            <pre class="whitespace-pre-wrap text-sm text-gray-700">${result.output}</pre>
+                        </div>
+                    `;
+                } else {
+                    document.getElementById('deployOutput').textContent = result.output;
+                }
             } catch (error) {
                 document.getElementById('deployOutput').textContent = 'Error: ' + error.message;
             }
@@ -415,10 +442,92 @@
                 const response = await fetch('/api/deploy-ipfs', { method: 'POST' });
                 const result = await response.json();
                 
-                document.getElementById('deployOutput').textContent = result.output;
+                if (result.success && result.accessUrls) {
+                    // Create formatted display with all access URLs
+                    const deployStatusDiv = document.getElementById('deploymentStatus');
+                    
+                    let gatewayLinks = result.accessUrls.ipfs.gateways.map(url => `
+                        <div class="flex items-center justify-between bg-white p-2 rounded border mb-1">
+                            <a href="${url}" target="_blank" class="text-blue-600 hover:text-blue-800 font-medium underline flex-1">
+                                ${url}
+                            </a>
+                            <button onclick="copyToClipboard('${url}')" 
+                                    class="ml-2 text-sm bg-blue-100 hover:bg-blue-200 px-2 py-1 rounded">
+                                Copy
+                            </button>
+                        </div>
+                    `).join('');
+                    
+                    deployStatusDiv.innerHTML = `
+                        <h3 class="text-lg font-medium mb-3 text-green-600">✅ IPFS Deployment Successful!</h3>
+                        
+                        <div class="bg-blue-50 border border-blue-200 p-4 rounded-md mb-4">
+                            <h4 class="font-semibold text-blue-800 mb-2">📄 GitHub Pages (Primary Access):</h4>
+                            <div class="bg-white p-3 rounded border">
+                                <a href="${result.accessUrls.github}" target="_blank" 
+                                   class="text-blue-600 hover:text-blue-800 font-medium underline">
+                                    ${result.accessUrls.github}
+                                </a>
+                                <button onclick="copyToClipboard('${result.accessUrls.github}')" 
+                                        class="ml-2 text-sm bg-blue-100 hover:bg-blue-200 px-2 py-1 rounded">
+                                    Copy
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-purple-50 border border-purple-200 p-4 rounded-md mb-4">
+                            <h4 class="font-semibold text-purple-800 mb-3">🌍 IPFS Gateways (Decentralized Access):</h4>
+                            <p class="text-sm text-purple-700 mb-3">
+                                📡 IPFS Hash: <code class="bg-purple-100 px-2 py-1 rounded">${result.hash}</code>
+                                <button onclick="copyToClipboard('${result.hash}')" 
+                                        class="ml-2 text-sm bg-purple-100 hover:bg-purple-200 px-1 py-1 rounded">
+                                    Copy Hash
+                                </button>
+                            </p>
+                            <div class="space-y-1">
+                                ${gatewayLinks}
+                            </div>
+                        </div>
+                        
+                        <div class="bg-green-50 border border-green-200 p-4 rounded-md mb-4">
+                            <h4 class="font-semibold text-green-800 mb-2">💡 Usage Tips:</h4>
+                            <ul class="text-sm text-green-700 space-y-1">
+                                <li>• Use GitHub Pages URL for regular visitors</li>
+                                <li>• Share IPFS URLs for decentralized access</li>
+                                <li>• Content remains accessible even if GitHub is down</li>
+                                <li>• IPFS content is permanently pinned and distributed</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-gray-50 p-4 rounded-md">
+                            <details class="cursor-pointer">
+                                <summary class="font-medium text-gray-700">📋 Deployment Details</summary>
+                                <pre class="whitespace-pre-wrap text-sm text-gray-600 mt-2">${result.output}</pre>
+                            </details>
+                        </div>
+                    `;
+                } else {
+                    document.getElementById('deployOutput').textContent = result.output;
+                }
             } catch (error) {
                 document.getElementById('deployOutput').textContent = 'Error: ' + error.message;
             }
+        }
+
+        // Utility function to copy text to clipboard
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                // Show temporary success message
+                const originalText = event.target.textContent;
+                event.target.textContent = 'Copied!';
+                event.target.classList.add('bg-green-200');
+                setTimeout(() => {
+                    event.target.textContent = originalText;
+                    event.target.classList.remove('bg-green-200');
+                }, 1000);
+            }).catch(err => {
+                alert('Failed to copy to clipboard');
+            });
         }
 
         // Post management functions
