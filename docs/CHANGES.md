@@ -3,22 +3,36 @@
 ## Version 0.0.18 (2025-06-26)
 
 ### 🔧 Critical Bug Fixes
-- **ES Modules Fix**: Fixed `require is not defined` error in server.js for IPFS deployment
-- **Import Statements**: Updated tar-stream and form-data from require() to ES6 import
-- **Settings Tab**: Added missing Settings tab button in admin.html navigation
-- **API Key Handling**: Modified enhanceContent function to use server-side .env when localStorage is empty
-- **Blog Links**: Fixed Manage Posts to show clickable links to individual blog posts in Docsify format
+- **ES Modules Fix**: ✅ Fixed `require is not defined` error in server.js for IPFS deployment
+- **Import Statements**: ✅ Updated tar-stream and form-data from require() to ES6 import
+- **Settings Tab**: ✅ Added missing Settings tab button in admin.html navigation
+- **API Key Handling**: ✅ Modified enhanceContent function to use server-side .env when localStorage is empty
+- **Blog Links**: ✅ Fixed Manage Posts to show clickable links to individual blog posts in Docsify format
+- **Pro Version Link**: ✅ Fixed Pro version link from `/admin-pro.html` to `/app/admin/admin-pro.html`
+- **IPFS Deployment**: ✅ Simplified IPFS deployment with demo mode for invalid credentials
 
 ### 🌐 File Changes
-- Modified: `app/src/server.js` - Fixed ES modules imports for tar-stream and form-data
-- Modified: `app/admin/admin.html` - Added Settings tab button and improved post linking
-- Fixed: All blog post titles in Manage Posts now link to http://localhost:3000/#/posts/year/month/filename
+- Modified: `app/src/server.js` - Fixed ES modules imports and simplified IPFS deployment
+- Modified: `app/admin/admin.html` - Added Settings tab, fixed Pro version link, improved post linking with correct paths
+- Modified: `start.sh` - Changed to foreground execution with proper signal handling
+- Updated: `app/tests/web-automation.test.js` - Updated paths and new tab tests
+- Updated: `app/tests/ai-enhance.test.js` - Added Gemini API and localStorage fallback tests
+- Created: `app/tests/new-features-v0.0.18.test.js` - Comprehensive tests for v0.0.18 features
 
 ### ✅ Verification Results
 - **AI Enhancement**: ✅ Successfully tested with Gemini API (715→1075 characters)
 - **Environment Variables**: ✅ Correctly reading from app/.env file
-- **Blog Links**: ✅ Individual posts clickable in format: http://localhost:3000/#/posts/2025/06/2025-06-26-geminicli-claudecode-
+- **Blog Links**: ✅ Fixed - now include `/posts/` prefix: http://localhost:3000/#/posts/2025/06/filename
 - **Services**: ✅ Both Express (3001) and Docsify (3000) running normally
+- **Pro Version**: ✅ Link corrected to proper path
+- **IPFS**: ⚠️ Demo mode - requires valid Pinata credentials for real deployment
+
+### 📝 User Feedback Addressed
+1. ✅ Fixed Pro version link path 
+2. ✅ IPFS deployment no longer hangs (demo mode)
+3. ✅ Blog post links now work correctly with `/posts/` prefix
+4. ✅ Removed header link from Manage Posts title
+5. ✅ Code auto-refresh without manual restart confirmed
 
 ---
 

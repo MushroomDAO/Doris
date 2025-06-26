@@ -28,17 +28,17 @@ mkdir -p logs
 
 echo "🌐 启动服务器..."
 
-# 启动Express服务器（后台运行）
+# 启动Express服务器（前台运行）
 echo "启动Express服务器 (端口 3001)..."
-nohup pnpm run dev > logs/express.log 2>&1 &
+pnpm run dev &
 EXPRESS_PID=$!
 
 # 等待Express服务器启动
 sleep 2
 
-# 启动Docsify服务器（后台运行）
+# 启动Docsify服务器（前台运行）
 echo "启动Docsify服务器 (端口 3000)..."
-nohup pnpm run serve:blog > logs/docsify.log 2>&1 &
+pnpm run serve:blog &
 DOCSIFY_PID=$!
 
 # 等待服务启动
@@ -90,12 +90,18 @@ if command -v open &> /dev/null; then
     fi
 fi
 
-echo "✨ 服务已在后台运行，按 Ctrl+C 退出脚本（服务会继续运行）"
+echo "✨ 服务已启动，按 Ctrl+C 停止所有服务"
 
-# 保持脚本运行以显示日志
-trap 'echo "脚本退出，服务继续在后台运行..."; exit 0' INT
+# 设置信号处理，确保子进程也被终止
+cleanup() {
+    echo ""
+    echo "🛑 正在停止服务..."
+    kill $EXPRESS_PID $DOCSIFY_PID 2>/dev/null || true
+    echo "✅ 所有服务已停止"
+    exit 0
+}
 
-tail -f logs/express.log &
-tail -f logs/docsify.log &
+trap cleanup INT TERM
 
+# 等待所有后台进程
 wait 

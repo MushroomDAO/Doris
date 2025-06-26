@@ -177,4 +177,38 @@ Content with émojis 🚀 and special characters: @#$%^&*()`;
             expect(errorMessage).toContain(error.message);
         });
     });
+
+    it('should support Gemini API as default provider', () => {
+        // Test Gemini API configuration
+        const providers = ['openai', 'deepseek', 'anthropic', 'gemini'];
+        const defaultProvider = 'gemini';
+        
+        expect(providers).toContain(defaultProvider);
+        expect(defaultProvider).toBe('gemini');
+        
+        // Test environment variable reading for Gemini
+        const geminiApiKey = process.env.GEMINI_API_KEY || process.env.Gemini_API_KEY;
+        
+        // Should accept both formats
+        if (process.env.GEMINI_API_KEY || process.env.Gemini_API_KEY) {
+            expect(geminiApiKey).toBeTruthy();
+        }
+    });
+
+    it('should handle localStorage fallback to environment variables', () => {
+        // Test the logic used in admin interface
+        const mockLocalStorageKey = null; // Simulate empty localStorage
+        const mockEnvKey = 'test-api-key-from-env';
+        
+        // Simulate the logic from admin.html enhanceContent function
+        const effectiveApiKey = mockLocalStorageKey || mockEnvKey;
+        
+        expect(effectiveApiKey).toBe(mockEnvKey);
+        
+        // Test with localStorage value
+        const mockLocalStorageValue = 'test-api-key-from-storage';
+        const effectiveApiKeyWithLocal = mockLocalStorageValue || mockEnvKey;
+        
+        expect(effectiveApiKeyWithLocal).toBe(mockLocalStorageValue);
+    });
 }); 

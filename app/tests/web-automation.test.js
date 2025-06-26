@@ -64,7 +64,7 @@ describe('Web Interface Automation Tests', () => {
     
     describe('Admin Interface Tests', () => {
         it('should load admin page successfully', async () => {
-            await page.goto(`${BASE_URL}/admin.html`);
+            await page.goto(`${BASE_URL}/app/admin/admin.html`);
             
             // Wait for page to load
             await page.waitForSelector('h1');
@@ -79,13 +79,13 @@ describe('Web Interface Automation Tests', () => {
         });
         
         it('should have functional navigation tabs', async () => {
-            await page.goto(`${BASE_URL}/admin.html`);
+            await page.goto(`${BASE_URL}/app/admin/admin.html`);
             
             // Wait for tabs to be available
             await page.waitForSelector('[data-tab]');
             
-            // Test tab switching
-            const tabs = ['content', 'ai-enhance', 'preview', 'deployment'];
+            // Test tab switching - updated tabs including new ones
+            const tabs = ['create', 'enhance', 'preview', 'generate-image', 'deploy', 'manage', 'settings'];
             
             for (const tab of tabs) {
                 const tabSelector = `[data-tab="${tab}"]`;
@@ -102,10 +102,10 @@ describe('Web Interface Automation Tests', () => {
         });
         
         it('should handle form inputs correctly', async () => {
-            await page.goto(`${BASE_URL}/admin.html`);
+            await page.goto(`${BASE_URL}/app/admin/admin.html`);
             
             // Test title input
-            const titleSelector = 'input[placeholder*="title"], #postTitle, #title';
+            const titleSelector = '#postTitle';
             if (await page.$(titleSelector)) {
                 await page.type(titleSelector, 'Test Blog Post');
                 const titleValue = await page.$eval(titleSelector, el => el.value);
@@ -113,29 +113,37 @@ describe('Web Interface Automation Tests', () => {
             }
             
             // Test content textarea
-            const contentSelector = 'textarea[placeholder*="content"], #postContent, #content';
+            const contentSelector = '#postContent';
             if (await page.$(contentSelector)) {
                 await page.type(contentSelector, 'This is test content for the blog post.');
                 const contentValue = await page.$eval(contentSelector, el => el.value);
                 expect(contentValue).toContain('This is test content');
+            }
+            
+            // Test template type selector
+            const templateSelector = '#templateType';
+            if (await page.$(templateSelector)) {
+                await page.select(templateSelector, 'tech');
+                const selectedValue = await page.$eval(templateSelector, el => el.value);
+                expect(selectedValue).toBe('tech');
             }
         });
     });
     
     describe('Pro Interface Tests', () => {
         it('should load pro admin page successfully', async () => {
-            await page.goto(`${BASE_URL}/admin-pro.html`);
+            await page.goto(`${BASE_URL}/app/admin/admin-pro.html`);
             
             // Wait for page to load
-            await page.waitForSelector('h1');
+            await page.waitForSelector('h1, .navbar-brand');
             
             // Check if title is correct
             const title = await page.title();
-            expect(title).toContain('Doris Protocol Pro');
+            expect(title).toContain('Doris Protocol');
             
-            // Check if main elements are present
-            const heading = await page.$eval('h1', el => el.textContent);
-            expect(heading).toContain('Doris Protocol Pro');
+            // Check if main elements are present (updated selectors for new design)
+            const brandExists = await page.$('.navbar-brand');
+            expect(brandExists).toBeTruthy();
         });
         
         it('should test AI chat functionality', async () => {
@@ -179,7 +187,7 @@ describe('Web Interface Automation Tests', () => {
         });
         
         it('should test IPFS deployment functionality', async () => {
-            await page.goto(`${BASE_URL}/admin-pro.html`);
+            await page.goto(`${BASE_URL}/app/admin/admin-pro.html`);
             
             // Click deploy button
             await page.click('button[onclick="deployIPFS()"]');
@@ -190,6 +198,53 @@ describe('Web Interface Automation Tests', () => {
             // Check if deployment status updated
             const deployStatus = await page.$eval('#deployStatus', el => el.textContent);
             expect(deployStatus).toContain('Deployed!');
+        });
+        
+        it('should test new manage posts functionality', async () => {
+            await page.goto(`${BASE_URL}/app/admin/admin.html`);
+            
+            // Switch to manage posts tab
+            await page.click('[data-tab="manage"]');
+            await page.waitForTimeout(500);
+            
+            // Check if posts table is visible
+            const postsTable = await page.$('#postsTable');
+            expect(postsTable).toBeTruthy();
+            
+            // Check if refresh button works
+            await page.click('button[onclick="refreshPosts()"]');
+            await page.waitForTimeout(1000);
+        });
+        
+        it('should test AI enhancement functionality', async () => {
+            await page.goto(`${BASE_URL}/app/admin/admin.html`);
+            
+            // Switch to enhance tab
+            await page.click('[data-tab="enhance"]');
+            await page.waitForTimeout(500);
+            
+            // Check if AI provider selector is present
+            const aiProvider = await page.$('#aiProvider');
+            expect(aiProvider).toBeTruthy();
+            
+            // Check if Gemini is selected by default
+            const selectedValue = await page.$eval('#aiProvider', el => el.value);
+            expect(selectedValue).toBe('gemini');
+        });
+        
+        it('should test settings tab functionality', async () => {
+            await page.goto(`${BASE_URL}/app/admin/admin.html`);
+            
+            // Switch to settings tab
+            await page.click('[data-tab="settings"]');
+            await page.waitForTimeout(500);
+            
+            // Check if API key inputs are present
+            const geminiInput = await page.$('#geminiApiKey');
+            const openaiInput = await page.$('#openaiApiKey');
+            
+            expect(geminiInput).toBeTruthy();
+            expect(openaiInput).toBeTruthy();
         });
     });
     
