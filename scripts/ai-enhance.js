@@ -4,7 +4,7 @@ import glob from 'glob';
 import matter from 'gray-matter';
 import OpenAI from 'openai';
 import Anthropic from '@anthropic-ai/sdk';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenAI } from '@google/genai';
 import chalk from 'chalk';
 import ora from 'ora';
 import dotenv from 'dotenv';
@@ -45,8 +45,9 @@ class AIEnhancer {
     
     // Google Gemini
     this.gemini = null;
-    if (process.env.GEMINI_API_KEY) {
-      this.gemini = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    const geminiApiKey = process.env.GEMINI_API_KEY || process.env.Gemini_API_KEY;
+    if (geminiApiKey) {
+      this.gemini = new GoogleGenAI({ apiKey: geminiApiKey });
     }
     
     this.config = this.loadConfig();
@@ -173,16 +174,16 @@ class AIEnhancer {
   }
 
   async callGemini(prompt) {
-    const model = this.gemini.getGenerativeModel({ 
-      model: process.env.GEMINI_MODEL || 'gemini-2.5-flash',
-      generationConfig: {
+    const response = await this.gemini.models.generateContent({
+      model: process.env.GEMINI_MODEL || 'gemini-2.5-flash-001',
+      contents: prompt,
+      config: {
         temperature: this.config.temperature,
         maxOutputTokens: this.config.maxTokens,
       }
     });
 
-    const result = await model.generateContent(prompt);
-    return result.response.text().trim();
+    return response.text.trim();
   }
 
   async processMarkdownFile(filePath) {

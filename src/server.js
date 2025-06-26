@@ -256,7 +256,7 @@ app.post('/api/enhance-content', async (req, res) => {
             'openai': process.env.OPENAI_API_KEY,
             'deepseek': process.env.DEEPSEEK_API_KEY,
             'anthropic': process.env.ANTHROPIC_API_KEY,
-            'gemini': process.env.GEMINI_API_KEY
+            'gemini': process.env.GEMINI_API_KEY || process.env.Gemini_API_KEY
         };
         
         if (!apiKeyMap[provider]) {
@@ -268,7 +268,7 @@ app.post('/api/enhance-content', async (req, res) => {
         const filePath = path.join(getPostsDirectory(), postFile);
         
         // Check if file exists
-        if (!await fs.pathExists(filePath)) {
+        if (!fs.existsSync(filePath)) {
             return res.status(404).json({ error: 'Post file not found' });
         }
         
@@ -423,19 +423,20 @@ async function callAnthropic(prompt) {
 }
 
 async function callGemini(prompt) {
-    const { GoogleGenerativeAI } = await import('@google/generative-ai');
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    const { GoogleGenAI } = await import('@google/genai');
+    const apiKey = process.env.GEMINI_API_KEY || process.env.Gemini_API_KEY;
+    const genAI = new GoogleGenAI({ apiKey: apiKey });
     
-    const model = genAI.getGenerativeModel({ 
-        model: process.env.GEMINI_MODEL || 'gemini-2.5-flash',
-        generationConfig: {
+    const response = await genAI.models.generateContent({
+        model: process.env.GEMINI_MODEL || 'gemini-2.5-flash-001',
+        contents: prompt,
+        config: {
             temperature: 0.7,
             maxOutputTokens: 2000,
         }
     });
 
-    const result = await model.generateContent(prompt);
-    return result.response.text().trim();
+    return response.text.trim();
 }
 
 // Deploy to GitHub Pages
