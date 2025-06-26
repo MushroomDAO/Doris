@@ -8,7 +8,7 @@
 ## Recent Posts
 
 - [How to use MCP](posts/2025/06/2025-06-25-how-to-use-mcp.md)
-- [如何完成一篇博士论文](posts/2025/06/2025-06-26-.md)
+- [博士论文写作全攻略：助你顺利毕业](posts/2025/06/2025-06-26-.md)
 - [GeminiCli 与 ClaudeCode 的快速对比](posts/2025/06/2025-06-26-geminicli-claudecode-.md)
 - [How to use MCP](posts/2025/06/2025-06-26-how-to-use-mcp.md)
 - [Doris Protocol - First Test Post](posts/2024/12/2024-12-26-first-test-post.md)
@@ -18,7 +18,7 @@
 
 - **June 2025**
   - [How to use MCP](posts/2025/06/2025-06-25-how-to-use-mcp.md)
-  - [如何完成一篇博士论文](posts/2025/06/2025-06-26-.md)
+  - [博士论文写作全攻略：助你顺利毕业](posts/2025/06/2025-06-26-.md)
   - [GeminiCli 与 ClaudeCode 的快速对比](posts/2025/06/2025-06-26-geminicli-claudecode-.md)
   - [How to use MCP](posts/2025/06/2025-06-26-how-to-use-mcp.md)
 - **December 2024**

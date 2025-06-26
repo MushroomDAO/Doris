@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doris Protocol - Content Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.24.1/themes/prism.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.24.1/components/prism-core.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.24.1/plugins/autoloader/prism-autoloader.min.js"></script>
+    <style>
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .tab-button.active { background-color: #3b82f6; color: white; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto p-6">
+        <!-- Header -->
+        <header class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800 mb-2">Doris Protocol</h1>
+                    <p class="text-gray-600">Content Management Dashboard</p>
+                </div>
+                <div class="flex space-x-3">
+                    <a href="/" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition duration-200" target="_blank">
+                        📖 View Blog
+                    </a>
+                    <a href="/app/admin/admin-pro.html" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-md transition duration-200" target="_blank">
+                        🚀 Pro Version
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <div class="bg-white rounded-lg shadow-md mb-6">
+            <div class="flex border-b">
+                <button class="tab-button active px-6 py-3 rounded-tl-lg focus:outline-none" data-tab="create">
+                    📝 Create Content
+                </button>
+                <button class="tab-button px-6 py-3 focus:outline-none" data-tab="enhance">
+                    🤖 AI Enhance
+                </button>
+                <button class="tab-button px-6 py-3 focus:outline-none" data-tab="preview">
+                    👁️ Preview
+                </button>
+                <button class="tab-button px-6 py-3 focus:outline-none" data-tab="generate-image">
+                    🎨 Generate Image
+                </button>
+                <button class="tab-button px-6 py-3 focus:outline-none" data-tab="deploy">
+                    🚀 Deploy
+                </button>
+                <button class="tab-button px-6 py-3 focus:outline-none" data-tab="manage">
+                    📁 Manage Posts
+                </button>
+                <button class="tab-button px-6 py-3 rounded-tr-lg focus:outline-none" data-tab="settings">
+                    ⚙️ Settings
+                </button>
+            </div>
+
+            <!-- Create Content Tab -->
+            <div id="create" class="tab-content active p-6">
+                <h2 class="text-2xl font-semibold mb-4">Create New Content</h2>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Template Type</label>
+                        <select id="templateType" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
+                            <option value="daily">Daily Post</option>
+                            <option value="weekly">Weekly Summary</option>
+                            <option value="tech">Tech Article</option>
+                            <option value="thoughts">Random Thoughts</option>
+                            <option value="book-notes">Book Notes</option>
+                            <option value="project-update">Project Update</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                        <input type="text" id="postTitle" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" placeholder="Enter post title">
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Content</label>
+                    <textarea id="postContent" rows="15" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" placeholder="Write your content here..."></textarea>
+                </div>
+
+                <div class="mt-6 flex gap-3">
+                    <button onclick="generatePost()" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-md transition duration-200">
+                        Generate Template
+                    </button>
+                    <button onclick="savePost()" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-md transition duration-200">
+                        Save Post
+                    </button>
+                </div>
+            </div>
+
+            <!-- AI Enhance Tab -->
+            <div id="enhance" class="tab-content p-6">
+                <h2 class="text-2xl font-semibold mb-4">AI Content Enhancement</h2>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Select Post</label>
+                        <select id="enhancePostSelect" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
+                            <option value="">Loading posts...</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">AI Provider</label>
+                        <select id="aiProvider" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
+                            <option value="openai">OpenAI GPT-4</option>
+                            <option value="deepseek">DeepSeek (SiliconFlow)</option>
+                            <option value="anthropic">Anthropic Claude</option>
+                            <option value="gemini" selected>Google Gemini</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Enhancement Options</label>
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                        <label class="flex items-center">
+                            <input type="checkbox" id="improveTitle" checked class="mr-2">
+                            <span>Improve Title</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" id="addSummary" checked class="mr-2">
+                            <span>Add Summary</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" id="generateTags" checked class="mr-2">
+                            <span>Generate Tags</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" id="improveContent" class="mr-2">
+                            <span>Improve Content</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <button onclick="enhanceContent()" class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-md transition duration-200">
+                        🤖 Enhance with AI
+                    </button>
+                </div>
+
+                <div id="enhanceResult" class="mt-6 hidden">
+                    <h3 class="text-lg font-medium mb-3">Enhancement Result</h3>
+                    <div class="bg-gray-50 p-4 rounded-md">
+                        <pre id="enhanceOutput" class="whitespace-pre-wrap"></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preview Tab -->
+            <div id="preview" class="tab-content p-6">
+                <h2 class="text-2xl font-semibold mb-4">Preview Content</h2>
+                
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Select Post</label>
+                    <select id="previewPostSelect" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
+                        <option value="">Loading posts...</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-lg font-medium mb-3">Raw Markdown</h3>
+                        <div class="bg-gray-50 p-4 rounded-md h-96 overflow-auto">
+                            <pre id="rawMarkdown" class="text-sm"></pre>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-medium mb-3">Rendered Preview</h3>
+                        <div id="renderedContent" class="bg-white p-4 rounded-md border h-96 overflow-auto prose max-w-none"></div>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <button onclick="openInDocsify()" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-md transition duration-200">
+                        Open in Docsify
+                    </button>
+                </div>
+            </div>
+
+            <!-- Generate Image Tab -->
+            <div id="generate-image" class="tab-content p-6">
+                <h2 class="text-2xl font-semibold mb-4">AI Image Generation</h2>
+                
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Select Article (Optional)</label>
+                    <select id="imagePostSelect" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 mb-3">
+                        <option value="">Select an article to auto-extract content...</option>
+                    </select>
+                    <button onclick="extractContentForImage()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm">
+                        📝 Extract Content (First 250 chars)
+                    </button>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Image Description</label>
+                    <textarea id="imagePrompt" rows="4" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" placeholder="Describe the image you want to generate, e.g., 'A 3D rendered image of a pig with wings and a top hat flying over a happy futuristic scifi city with lots of greenery'"></textarea>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">AI Provider</label>
+                        <select id="imageProvider" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
+                            <option value="gemini">Google Gemini 2.0 Flash</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Usage</label>
+                        <select id="imageUsage" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
+                            <option value="blog-cover">Blog Post Cover</option>
+                            <option value="illustration">Content Illustration</option>
+                            <option value="icon">Icon/Avatar</option>
+                            <option value="background">Background Image</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <button onclick="generateImage()" class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-md transition duration-200">
+                        🎨 Generate Image
+                    </button>
+                </div>
+
+                <div id="imageResult" class="hidden">
+                    <h3 class="text-lg font-medium mb-3">Generated Images</h3>
+                    <div id="imageOutput" class="space-y-4"></div>
+                </div>
+            </div>
+
+            <!-- Deploy Tab -->
+            <div id="deploy" class="tab-content p-6">
+                <h2 class="text-2xl font-semibold mb-4">Deploy Content</h2>
+                
+                <!-- GitHub Settings -->
+                <div class="mb-6 bg-gray-50 p-4 rounded-lg">
+                    <h3 class="text-lg font-semibold mb-3">⚙️ GitHub Settings</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">GitHub Username</label>
+                            <input type="text" id="githubUsername" class="w-full p-3 border border-gray-300 rounded-md" placeholder="your-username">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Repository Name</label>
+                            <input type="text" id="githubRepo" class="w-full p-3 border border-gray-300 rounded-md" placeholder="blog-repository">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">GitHub Token</label>
+                            <input type="password" id="githubToken" class="w-full p-3 border border-gray-300 rounded-md" placeholder="ghp_xxxxxxxxxxxx">
+                        </div>
+                        <div class="flex items-end">
+                            <button onclick="saveGithubSettings()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-3 rounded-md">
+                                💾 Save Settings
+                            </button>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600 mt-2">
+                        📖 <a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token" target="_blank" class="text-blue-600 underline">How to create GitHub token</a>
+                    </p>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-blue-50 p-6 rounded-lg">
+                        <h3 class="text-lg font-semibold mb-3">📄 GitHub Pages</h3>
+                        <p class="text-gray-600 mb-4">Create repository and deploy with GitHub API</p>
+                        <div class="space-y-2">
+                            <button onclick="createGitHubRepo()" class="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md">
+                                🆕 Create Repository
+                            </button>
+                            <button onclick="deployGitHub()" class="w-full bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md">
+                                🚀 Deploy to GitHub
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-purple-50 p-6 rounded-lg">
+                        <h3 class="text-lg font-semibold mb-3">🌐 IPFS</h3>
+                        <p class="text-gray-600 mb-4">Decentralized deployment</p>
+                        <button onclick="deployIPFS()" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-md">
+                            Deploy to IPFS
+                        </button>
+                    </div>
+                </div>
+
+                <div id="deploymentStatus" class="mt-6 hidden">
+                    <h3 class="text-lg font-medium mb-3">Deployment Status</h3>
+                    <div class="bg-gray-50 p-4 rounded-md">
+                        <pre id="deployOutput" class="whitespace-pre-wrap text-sm"></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Manage Posts Tab -->
+            <div id="manage" class="tab-content p-6">
+                <h2 class="text-2xl font-semibold mb-4">Manage Posts</h2>
+                
+                <div class="mb-4">
+                    <button onclick="refreshPosts()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md">
+                        🔄 Refresh
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-lg overflow-hidden">
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="postsTable" class="divide-y divide-gray-200">
+                            <!-- Posts will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+                    </div>
+            
+            <!-- Settings Tab -->
+            <div id="settings" class="tab-content p-6">
+                <h2 class="text-2xl font-semibold mb-4">⚙️ API Settings</h2>
+                
+                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-yellow-700">
+                                <strong>重要提示：</strong> API keys 保存在浏览器本地存储中，仅在当前浏览器有效。如需修改服务器环境变量，请编辑 .env 文件。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- AI Providers Configuration -->
+                    <div class="bg-white border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold mb-4 text-gray-800">🤖 AI Content Enhancement</h3>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">OpenAI API Key</label>
+                                <input type="password" id="openaiApiKey" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" placeholder="sk-...">
+                                <p class="text-xs text-gray-500 mt-1">用于 GPT-4 内容增强</p>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">DeepSeek API Key</label>
+                                <input type="password" id="deepseekApiKey" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" placeholder="sk-...">
+                                <p class="text-xs text-gray-500 mt-1">用于 DeepSeek 内容增强 (SiliconFlow)</p>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Anthropic API Key</label>
+                                <input type="password" id="anthropicApiKey" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" placeholder="sk-ant-...">
+                                <p class="text-xs text-gray-500 mt-1">用于 Claude 内容增强</p>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Gemini API Key</label>
+                                <input type="password" id="geminiApiKey" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" placeholder="AI...">
+                                <p class="text-xs text-gray-500 mt-1">用于 Gemini 内容增强和图像生成</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Deployment Configuration -->
+                    <div class="bg-white border border-gray-200 rounded-lg p-6">
+                        <h3 class="text-lg font-semibold mb-4 text-gray-800">🚀 部署服务配置</h3>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Pinata API Key</label>
+                                <input type="password" id="pinataApiKey" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" placeholder="您的 Pinata API Key">
+                                <p class="text-xs text-gray-500 mt-1">用于 IPFS 部署</p>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Pinata Secret Key</label>
+                                <input type="password" id="pinataSecretKey" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500" placeholder="您的 Pinata Secret Key">
+                                <p class="text-xs text-gray-500 mt-1">用于 IPFS 部署身份验证</p>
+                            </div>
+                            
+                            <div class="bg-gray-50 p-4 rounded-md">
+                                <h4 class="font-medium text-gray-700 mb-2">📋 API Keys 状态检查</h4>
+                                <div id="apiKeysStatus" class="space-y-2 text-sm">
+                                    <div id="openaiStatus" class="flex items-center">
+                                        <span class="w-2 h-2 bg-gray-400 rounded-full mr-2"></span>
+                                        <span>OpenAI: 未配置</span>
+                                    </div>
+                                    <div id="deepseekStatus" class="flex items-center">
+                                        <span class="w-2 h-2 bg-gray-400 rounded-full mr-2"></span>
+                                        <span>DeepSeek: 未配置</span>
+                                    </div>
+                                    <div id="anthropicStatus" class="flex items-center">
+                                        <span class="w-2 h-2 bg-gray-400 rounded-full mr-2"></span>
+                                        <span>Anthropic: 未配置</span>
+                                    </div>
+                                    <div id="geminiStatus" class="flex items-center">
+                                        <span class="w-2 h-2 bg-gray-400 rounded-full mr-2"></span>
+                                        <span>Gemini: 未配置</span>
+                                    </div>
+                                    <div id="pinataStatus" class="flex items-center">
+                                        <span class="w-2 h-2 bg-gray-400 rounded-full mr-2"></span>
+                                        <span>Pinata: 未配置</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-6 flex gap-3">
+                    <button onclick="saveApiSettings()" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-md transition duration-200">
+                        💾 保存设置
+                    </button>
+                    <button onclick="testApiKeys()" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-md transition duration-200">
+                        🧪 测试连接
+                    </button>
+                    <button onclick="clearApiSettings()" class="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-md transition duration-200">
+                        🗑️ 清除设置
+                    </button>
+                </div>
+                
+                <div id="settingsResult" class="mt-6 hidden">
+                    <div class="bg-gray-50 p-4 rounded-md">
+                        <pre id="settingsOutput" class="whitespace-pre-wrap text-sm"></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Include Marked.js for Markdown rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <script>
+        // Tab switching functionality
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const tabId = button.getAttribute('data-tab');
+                
+                // Hide all tab contents
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                
+                // Remove active class from all buttons
+                document.querySelectorAll('.tab-button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                // Show selected tab content
+                document.getElementById(tabId).classList.add('active');
+                button.classList.add('active');
+                
+                // Load data for specific tabs
+                if (tabId === 'enhance' || tabId === 'preview') {
+                    loadPosts();
+                } else if (tabId === 'manage') {
+                    refreshPosts();
+                } else if (tabId === 'settings') {
+                    loadApiSettings();
+                    updateApiStatus();
+                }
+            });
+        });
+
+        // Content creation functions
+        async function generatePost() {
+            const templateType = document.getElementById('templateType').value;
+            const title = document.getElementById('postTitle').value;
+            
+            try {
+                const response = await fetch('/api/generate-post', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ templateType, title })
+                });
+                
+                const result = await response.json();
+                document.getElementById('postContent').value = result.content;
+            } catch (error) {
+                alert('Error generating post: ' + error.message);
+            }
+        }
+
+        async function savePost() {
+            const title = document.getElementById('postTitle').value;
+            const content = document.getElementById('postContent').value;
+            
+            if (!title || !content) {
+                alert('Please fill in both title and content');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/save-post', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, content })
+                });
+                
+                const result = await response.json();
+                alert('Post saved successfully!');
+                loadPosts(); // Refresh post lists
+            } catch (error) {
+                alert('Error saving post: ' + error.message);
+            }
+        }
+
+        // AI enhancement functions
+        let currentEnhancedContent = null;
+        let currentPostFile = null;
+        
+        async function enhanceContent() {
+            const postFile = document.getElementById('enhancePostSelect').value;
+            const provider = document.getElementById('aiProvider').value;
+            
+            if (!postFile) {
+                alert('Please select a post to enhance');
+                return;
+            }
+            
+            // Get API key from localStorage, or let server use .env file
+            const apiKey = localStorage.getItem(`api-${provider}`);
+            
+            const options = {
+                improveTitle: document.getElementById('improveTitle').checked,
+                addSummary: document.getElementById('addSummary').checked,
+                generateTags: document.getElementById('generateTags').checked,
+                improveContent: document.getElementById('improveContent').checked
+            };
+            
+            try {
+                document.getElementById('enhanceResult').classList.remove('hidden');
+                document.getElementById('enhanceOutput').textContent = 'Enhancing content...';
+                
+                const response = await fetch('/api/enhance-content', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        postFile, 
+                        provider, 
+                        options,
+                        apiKey: apiKey
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    currentEnhancedContent = result.enhancedContent;
+                    currentPostFile = postFile;
+                    
+                    document.getElementById('enhanceOutput').innerHTML = `
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between bg-green-50 p-3 rounded-md">
+                                <span class="text-green-700 font-medium">✅ AI Enhancement Completed</span>
+                                <span class="text-sm text-green-600">
+                                    ${result.originalLength} → ${result.enhancedLength} characters (${result.provider})
+                                </span>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                <div>
+                                    <h4 class="font-semibold text-gray-700 mb-2">Original Content:</h4>
+                                    <div class="bg-gray-50 p-3 rounded-md h-64 overflow-auto">
+                                        <pre class="text-sm whitespace-pre-wrap">${await getOriginalContent(postFile)}</pre>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-700 mb-2">Enhanced Content:</h4>
+                                    <div class="bg-blue-50 p-3 rounded-md h-64 overflow-auto">
+                                        <pre class="text-sm whitespace-pre-wrap">${result.enhancedContent}</pre>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex gap-3 justify-center">
+                                <button onclick="applyEnhancement()" class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-md transition duration-200">
+                                    ✅ 采用增强内容
+                                </button>
+                                <button onclick="discardEnhancement()" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-md transition duration-200">
+                                    ❌ 放弃修改
+                                </button>
+                                <button onclick="showDiff()" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-md transition duration-200">
+                                    📊 查看差异
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    document.getElementById('enhanceOutput').textContent = 'Error: ' + (result.error || 'Unknown error');
+                }
+            } catch (error) {
+                document.getElementById('enhanceOutput').textContent = 'Error: ' + error.message;
+            }
+        }
+        
+        async function getOriginalContent(postFile) {
+            try {
+                const response = await fetch(`/api/post-content?file=${encodeURIComponent(postFile)}`);
+                const data = await response.json();
+                return data.content;
+            } catch (error) {
+                return 'Error loading original content';
+            }
+        }
+        
+        async function applyEnhancement() {
+            if (!currentEnhancedContent || !currentPostFile) {
+                alert('No enhancement to apply');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/save-enhanced-content', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        postFile: currentPostFile, 
+                        content: currentEnhancedContent 
+                    })
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    alert('✅ Enhanced content has been saved successfully!');
+                    currentEnhancedContent = null;
+                    currentPostFile = null;
+                    document.getElementById('enhanceResult').classList.add('hidden');
+                    loadPosts(); // Refresh the post list
+                } else {
+                    alert('Error saving enhanced content: ' + result.error);
+                }
+            } catch (error) {
+                alert('Error saving enhanced content: ' + error.message);
+            }
+        }
+        
+        function discardEnhancement() {
+            currentEnhancedContent = null;
+            currentPostFile = null;
+            document.getElementById('enhanceResult').classList.add('hidden');
+            alert('Enhancement discarded');
+        }
+        
+        function showDiff() {
+            // This could be enhanced with a proper diff viewer
+            alert('Diff viewer feature coming soon!');
+        }
+
+        // Image generation functions
+        async function extractContentForImage() {
+            const selectedFile = document.getElementById('imagePostSelect').value;
+            if (!selectedFile) {
+                alert('Please select an article first');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/post-content?file=${encodeURIComponent(selectedFile)}`);
+                const data = await response.json();
+                
+                // Extract first 250 characters of content, remove markdown formatting
+                let content = data.content;
+                content = content.replace(/^---[\s\S]*?---/, ''); // Remove frontmatter
+                content = content.replace(/^#+ /gm, ''); // Remove headers
+                content = content.replace(/\*\*(.*?)\*\*/g, '$1'); // Remove bold
+                content = content.replace(/\*(.*?)\*/g, '$1'); // Remove italic
+                content = content.replace(/\[(.*?)\]\(.*?\)/g, '$1'); // Remove links
+                content = content.replace(/`(.*?)`/g, '$1'); // Remove code
+                content = content.replace(/\n\n+/g, ' '); // Replace multiple newlines with space
+                content = content.trim().substring(0, 250);
+                
+                // Generate image prompt based on content
+                const imagePrompt = `Create a blog post cover image that represents this content: "${content}". Make it visually appealing, professional, and suitable for a blog article.`;
+                
+                document.getElementById('imagePrompt').value = imagePrompt;
+                alert('Content extracted and converted to image prompt!');
+            } catch (error) {
+                alert('Error extracting content: ' + error.message);
+            }
+        }
+        
+        async function generateImage() {
+            const prompt = document.getElementById('imagePrompt').value;
+            const provider = document.getElementById('imageProvider').value;
+            const usage = document.getElementById('imageUsage').value;
+            
+            if (!prompt.trim()) {
+                alert('Please enter an image description');
+                return;
+            }
+            
+            try {
+                document.getElementById('imageResult').classList.remove('hidden');
+                document.getElementById('imageOutput').innerHTML = '<div class="text-center p-4"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500 mx-auto"></div><p class="mt-2 text-gray-600">Generating image...</p></div>';
+                
+                const response = await fetch('/api/generate-image', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt, provider })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    displayGeneratedImages(result, usage);
+                } else {
+                    document.getElementById('imageOutput').innerHTML = `<div class="bg-red-50 border border-red-200 p-4 rounded-md"><p class="text-red-700">Error: ${result.error}</p></div>`;
+                }
+            } catch (error) {
+                document.getElementById('imageOutput').innerHTML = `<div class="bg-red-50 border border-red-200 p-4 rounded-md"><p class="text-red-700">Error: ${error.message}</p></div>`;
+            }
+        }
+        
+        function displayGeneratedImages(result, usage) {
+            const imageOutput = document.getElementById('imageOutput');
+            
+            let imagesHtml = `
+                <div class="bg-green-50 border border-green-200 p-4 rounded-md mb-4">
+                    <h4 class="font-semibold text-green-800 mb-2">✅ Image Generation Successful!</h4>
+                    <p class="text-sm text-green-700">Generated ${result.count} image(s) with prompt: "${result.prompt}"</p>
+                </div>
+            `;
+            
+            if (result.texts && result.texts.length > 0) {
+                imagesHtml += `
+                    <div class="bg-blue-50 border border-blue-200 p-4 rounded-md mb-4">
+                        <h4 class="font-semibold text-blue-800 mb-2">🤖 AI Description:</h4>
+                        <p class="text-sm text-blue-700">${result.texts.join(' ')}</p>
+                    </div>
+                `;
+            }
+            
+            imagesHtml += '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">';
+            
+            result.images.forEach((image, index) => {
+                const sizeKB = Math.round(image.size / 1024);
+                imagesHtml += `
+                    <div class="bg-white border border-gray-200 rounded-lg p-4">
+                        <img src="${image.path}" alt="Generated image ${index + 1}" class="w-full h-auto rounded-md mb-3" />
+                        <div class="text-sm text-gray-600 mb-3">
+                            <p><strong>Filename:</strong> ${image.filename}</p>
+                            <p><strong>Size:</strong> ${sizeKB} KB</p>
+                            <p><strong>Type:</strong> ${image.mimeType}</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="copyImagePath('${image.path}')" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">
+                                Copy Path
+                            </button>
+                            <button onclick="insertImageIntoPost('${image.path}', '${result.prompt}')" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm">
+                                Insert into Post
+                            </button>
+                            <a href="${image.path}" download="${image.filename}" class="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm">
+                                Download
+                            </a>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            imagesHtml += '</div>';
+            imageOutput.innerHTML = imagesHtml;
+        }
+        
+        function copyImagePath(path) {
+            navigator.clipboard.writeText(`![Generated Image](${path})`).then(() => {
+                alert('Image markdown copied to clipboard!');
+            }).catch(() => {
+                alert('Failed to copy to clipboard');
+            });
+        }
+        
+        function insertImageIntoPost(imagePath, altText) {
+            // Create markdown text for the image
+            const imageMarkdown = `![${altText}](${imagePath})`;
+            
+            // Copy to clipboard and show instructions
+            navigator.clipboard.writeText(imageMarkdown).then(() => {
+                alert(`Image markdown copied to clipboard!\n\nMarkdown: ${imageMarkdown}\n\nYou can paste this into any blog post editor.`);
+            }).catch(() => {
+                // Fallback if clipboard API fails
+                prompt('Copy this markdown code and paste it into your blog post:', imageMarkdown);
+            });
+        }
+
+        // Preview functions
+        async function loadPosts() {
+            try {
+                const response = await fetch('/api/posts');
+                const posts = await response.json();
+                
+                const enhanceSelect = document.getElementById('enhancePostSelect');
+                const previewSelect = document.getElementById('previewPostSelect');
+                const imageSelect = document.getElementById('imagePostSelect');
+                
+                [enhanceSelect, previewSelect, imageSelect].forEach(select => {
+                    select.innerHTML = '<option value="">Select a post...</option>';
+                    posts.forEach(post => {
+                        const option = document.createElement('option');
+                        option.value = post.file;
+                        option.textContent = post.title;
+                        select.appendChild(option);
+                    });
+                });
+                
+            } catch (error) {
+                console.error('Error loading posts:', error);
+            }
+        }
+
+        document.getElementById('previewPostSelect').addEventListener('change', async (e) => {
+            const postFile = e.target.value;
+            if (!postFile) return;
+            
+            try {
+                const response = await fetch(`/api/post-content?file=${encodeURIComponent(postFile)}`);
+                const data = await response.json();
+                
+                document.getElementById('rawMarkdown').textContent = data.content;
+                document.getElementById('renderedContent').innerHTML = marked.parse(data.content);
+            } catch (error) {
+                console.error('Error loading post content:', error);
+            }
+        });
+
+        function openInDocsify() {
+            const selectedFile = document.getElementById('previewPostSelect').value;
+            if (!selectedFile) {
+                alert('请先选择一篇文章进行预览');
+                return;
+            }
+            
+            // Convert file path to docsify format
+            // 2024/12/2024-12-26-first-test-post.md -> http://localhost:3000/#/posts/2024/12/2024-12-26-first-test-post
+            const docsifyPath = selectedFile.replace('.md', '');
+            window.open(`http://localhost:3000/#/posts/${docsifyPath}`, '_blank');
+        }
+
+        // GitHub settings functions
+        function saveGithubSettings() {
+            const username = document.getElementById('githubUsername').value;
+            const repo = document.getElementById('githubRepo').value;
+            const token = document.getElementById('githubToken').value;
+            
+            if (!username || !repo || !token) {
+                alert('Please fill in all GitHub settings');
+                return;
+            }
+            
+            localStorage.setItem('github-username', username);
+            localStorage.setItem('github-repo', repo);
+            localStorage.setItem('github-token', token);
+            
+            alert('GitHub settings saved successfully!');
+        }
+        
+        function loadGithubSettings() {
+            const username = localStorage.getItem('github-username');
+            const repo = localStorage.getItem('github-repo');
+            const token = localStorage.getItem('github-token');
+            
+            if (username) document.getElementById('githubUsername').value = username;
+            if (repo) document.getElementById('githubRepo').value = repo;
+            if (token) document.getElementById('githubToken').value = token;
+        }
+        
+        async function createGitHubRepo() {
+            const username = localStorage.getItem('github-username');
+            const repo = localStorage.getItem('github-repo');
+            const token = localStorage.getItem('github-token');
+            
+            if (!username || !repo || !token) {
+                alert('Please configure GitHub settings first');
+                return;
+            }
+            
+            try {
+                document.getElementById('deploymentStatus').classList.remove('hidden');
+                document.getElementById('deployOutput').textContent = 'Creating GitHub repository...';
+                
+                const response = await fetch('/api/create-github-repo', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, repo, token })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById('deployOutput').innerHTML = `
+                        <div class="text-green-600 font-medium mb-2">✅ Repository Created Successfully!</div>
+                        <div class="space-y-1 text-sm">
+                            <p><strong>Repository:</strong> <a href="${result.repoUrl}" target="_blank" class="text-blue-600 underline">${result.repoUrl}</a></p>
+                            <p><strong>GitHub Pages:</strong> <a href="${result.pagesUrl}" target="_blank" class="text-blue-600 underline">${result.pagesUrl}</a></p>
+                            <p class="text-gray-600 mt-2">Now you can deploy your content to this repository.</p>
+                        </div>
+                    `;
+                } else {
+                    document.getElementById('deployOutput').textContent = 'Error: ' + result.error;
+                }
+            } catch (error) {
+                document.getElementById('deployOutput').textContent = 'Error: ' + error.message;
+            }
+        }
+
+        // Deployment functions
+        async function deployGitHub() {
+            const username = localStorage.getItem('github-username');
+            const repo = localStorage.getItem('github-repo');
+            const token = localStorage.getItem('github-token');
+            
+            if (!username || !repo || !token) {
+                alert('Please configure GitHub settings first');
+                return;
+            }
+            
+            try {
+                document.getElementById('deploymentStatus').classList.remove('hidden');
+                document.getElementById('deployOutput').textContent = 'Deploying to GitHub Pages...';
+                
+                const response = await fetch('/api/deploy-github', { 
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, repo, token })
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    const githubPagesUrl = `https://${username}.github.io/${repo}`;
+                    document.getElementById('deployOutput').innerHTML = `
+                        <div class="text-green-600 font-medium mb-2">✅ GitHub Pages Deployment Successful!</div>
+                        <div class="space-y-2 text-sm">
+                            <p><strong>Repository:</strong> <a href="https://github.com/${username}/${repo}" target="_blank" class="text-blue-600 underline">https://github.com/${username}/${repo}</a></p>
+                            <p><strong>GitHub Pages:</strong> <a href="${githubPagesUrl}" target="_blank" class="text-blue-600 underline">${githubPagesUrl}</a></p>
+                            <p><strong>Files Deployed:</strong> ${result.filesCount} files</p>
+                            <p class="text-gray-600 mt-2">⏳ GitHub Pages may take 2-5 minutes to update.</p>
+                        </div>
+                    `;
+                } else {
+                    document.getElementById('deployOutput').textContent = 'Error: ' + result.error;
+                }
+            } catch (error) {
+                document.getElementById('deployOutput').textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function deployIPFS() {
+            try {
+                document.getElementById('deploymentStatus').classList.remove('hidden');
+                document.getElementById('deployOutput').textContent = 'Deploying to IPFS...';
+                
+                const response = await fetch('/api/deploy-ipfs', { method: 'POST' });
+                const result = await response.json();
+                
+                if (result.success && result.accessUrls) {
+                    // Create formatted display with all access URLs
+                    const deployStatusDiv = document.getElementById('deploymentStatus');
+                    
+                    let gatewayLinks = result.accessUrls.ipfs.gateways.map(url => `
+                        <div class="flex items-center justify-between bg-white p-2 rounded border mb-1">
+                            <a href="${url}" target="_blank" class="text-blue-600 hover:text-blue-800 font-medium underline flex-1">
+                                ${url}
+                            </a>
+                            <button onclick="copyToClipboard('${url}')" 
+                                    class="ml-2 text-sm bg-blue-100 hover:bg-blue-200 px-2 py-1 rounded">
+                                Copy
+                            </button>
+                        </div>
+                    `).join('');
+                    
+                    deployStatusDiv.innerHTML = `
+                        <h3 class="text-lg font-medium mb-3 text-green-600">✅ IPFS Deployment Successful!</h3>
+                        
+                        <div class="bg-blue-50 border border-blue-200 p-4 rounded-md mb-4">
+                            <h4 class="font-semibold text-blue-800 mb-2">📄 GitHub Pages (Primary Access):</h4>
+                            <div class="bg-white p-3 rounded border">
+                                <a href="${result.accessUrls.github}" target="_blank" 
+                                   class="text-blue-600 hover:text-blue-800 font-medium underline">
+                                    ${result.accessUrls.github}
+                                </a>
+                                <button onclick="copyToClipboard('${result.accessUrls.github}')" 
+                                        class="ml-2 text-sm bg-blue-100 hover:bg-blue-200 px-2 py-1 rounded">
+                                    Copy
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-purple-50 border border-purple-200 p-4 rounded-md mb-4">
+                            <h4 class="font-semibold text-purple-800 mb-3">🌍 IPFS Gateways (Decentralized Access):</h4>
+                            <p class="text-sm text-purple-700 mb-3">
+                                📡 IPFS Hash: <code class="bg-purple-100 px-2 py-1 rounded">${result.hash}</code>
+                                <button onclick="copyToClipboard('${result.hash}')" 
+                                        class="ml-2 text-sm bg-purple-100 hover:bg-purple-200 px-1 py-1 rounded">
+                                    Copy Hash
+                                </button>
+                            </p>
+                            <div class="space-y-1">
+                                ${gatewayLinks}
+                            </div>
+                        </div>
+                        
+                        <div class="bg-green-50 border border-green-200 p-4 rounded-md mb-4">
+                            <h4 class="font-semibold text-green-800 mb-2">💡 Usage Tips:</h4>
+                            <ul class="text-sm text-green-700 space-y-1">
+                                <li>• Use GitHub Pages URL for regular visitors</li>
+                                <li>• Share IPFS URLs for decentralized access</li>
+                                <li>• Content remains accessible even if GitHub is down</li>
+                                <li>• IPFS content is permanently pinned and distributed</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-gray-50 p-4 rounded-md">
+                            <details class="cursor-pointer">
+                                <summary class="font-medium text-gray-700">📋 Deployment Details</summary>
+                                <pre class="whitespace-pre-wrap text-sm text-gray-600 mt-2">${result.output}</pre>
+                            </details>
+                        </div>
+                    `;
+                } else {
+                    document.getElementById('deployOutput').textContent = result.output;
+                }
+            } catch (error) {
+                document.getElementById('deployOutput').textContent = 'Error: ' + error.message;
+            }
+        }
+
+        // Utility function to copy text to clipboard
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                // Show temporary success message
+                const originalText = event.target.textContent;
+                event.target.textContent = 'Copied!';
+                event.target.classList.add('bg-green-200');
+                setTimeout(() => {
+                    event.target.textContent = originalText;
+                    event.target.classList.remove('bg-green-200');
+                }, 1000);
+            }).catch(err => {
+                alert('Failed to copy to clipboard');
+            });
+        }
+
+        // Post management functions
+        async function refreshPosts() {
+            try {
+                const response = await fetch('/api/posts');
+                const posts = await response.json();
+                
+                const tbody = document.getElementById('postsTable');
+                tbody.innerHTML = '';
+                
+                                    posts.forEach(post => {
+                        const row = document.createElement('tr');
+                        // Convert file path to docsify URL: posts/2025/06/2025-06-26-filename.md -> #/posts/2025/06/2025-06-26-filename
+                        const docsifyUrl = `http://localhost:3000/#/posts/${post.file.replace('.md', '')}`;
+                        row.innerHTML = `
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                <a href="${docsifyUrl}" target="_blank" class="text-blue-600 hover:text-blue-800 underline">
+                                    ${post.title}
+                                </a>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                ${post.date}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                ${post.type}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <button onclick="editPost('${post.file}')" class="text-blue-600 hover:text-blue-900 mr-3">Edit</button>
+                                <button onclick="deletePost('${post.file}')" class="text-red-600 hover:text-red-900">Delete</button>
+                            </td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                
+            } catch (error) {
+                console.error('Error loading posts:', error);
+            }
+        }
+
+        async function editPost(file) {
+            // Switch to create tab and load post content for editing
+            document.querySelector('[data-tab="create"]').click();
+            
+            try {
+                const response = await fetch(`/api/post-content?file=${encodeURIComponent(file)}`);
+                const data = await response.json();
+                
+                document.getElementById('postTitle').value = data.title;
+                document.getElementById('postContent').value = data.content;
+            } catch (error) {
+                alert('Error loading post for editing: ' + error.message);
+            }
+        }
+
+        async function deletePost(file) {
+            if (!confirm('Are you sure you want to delete this post?')) return;
+            
+            try {
+                const response = await fetch('/api/delete-post', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ file })
+                });
+                
+                if (response.ok) {
+                    alert('Post deleted successfully');
+                    refreshPosts();
+                }
+            } catch (error) {
+                alert('Error deleting post: ' + error.message);
+            }
+        }
+
+        // API Settings Functions
+        function saveApiSettings() {
+            const settings = {
+                openai: document.getElementById('openaiApiKey').value,
+                deepseek: document.getElementById('deepseekApiKey').value,
+                anthropic: document.getElementById('anthropicApiKey').value,
+                gemini: document.getElementById('geminiApiKey').value,
+                pinataApiKey: document.getElementById('pinataApiKey').value,
+                pinataSecretKey: document.getElementById('pinataSecretKey').value
+            };
+            
+            // Save to localStorage
+            Object.keys(settings).forEach(key => {
+                if (settings[key]) {
+                    localStorage.setItem(`api-${key}`, settings[key]);
+                }
+            });
+            
+            updateApiStatus();
+            showSettingsResult('✅ API 设置已保存到浏览器本地存储');
+        }
+        
+        function loadApiSettings() {
+            document.getElementById('openaiApiKey').value = localStorage.getItem('api-openai') || '';
+            document.getElementById('deepseekApiKey').value = localStorage.getItem('api-deepseek') || '';
+            document.getElementById('anthropicApiKey').value = localStorage.getItem('api-anthropic') || '';
+            document.getElementById('geminiApiKey').value = localStorage.getItem('api-gemini') || '';
+            document.getElementById('pinataApiKey').value = localStorage.getItem('api-pinataApiKey') || '';
+            document.getElementById('pinataSecretKey').value = localStorage.getItem('api-pinataSecretKey') || '';
+            updateApiStatus();
+        }
+        
+        function updateApiStatus() {
+            const statuses = {
+                openai: localStorage.getItem('api-openai'),
+                deepseek: localStorage.getItem('api-deepseek'),
+                anthropic: localStorage.getItem('api-anthropic'),
+                gemini: localStorage.getItem('api-gemini'),
+                pinata: localStorage.getItem('api-pinataApiKey') && localStorage.getItem('api-pinataSecretKey')
+            };
+            
+            Object.keys(statuses).forEach(key => {
+                const statusEl = document.getElementById(`${key}Status`);
+                const indicator = statusEl.querySelector('span');
+                const text = statusEl.querySelector('span:last-child');
+                
+                if (statuses[key]) {
+                    indicator.className = 'w-2 h-2 bg-green-400 rounded-full mr-2';
+                    text.textContent = `${key.charAt(0).toUpperCase() + key.slice(1)}: 已配置`;
+                } else {
+                    indicator.className = 'w-2 h-2 bg-gray-400 rounded-full mr-2';
+                    text.textContent = `${key.charAt(0).toUpperCase() + key.slice(1)}: 未配置`;
+                }
+            });
+        }
+        
+        async function testApiKeys() {
+            showSettingsResult('🧪 正在测试 API 连接...');
+            
+            const tests = [];
+            const settings = {
+                openai: localStorage.getItem('api-openai'),
+                deepseek: localStorage.getItem('api-deepseek'),
+                anthropic: localStorage.getItem('api-anthropic'),
+                gemini: localStorage.getItem('api-gemini')
+            };
+            
+            for (const [provider, key] of Object.entries(settings)) {
+                if (key) {
+                    try {
+                        const response = await fetch('/api/test-ai-key', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ provider, key })
+                        });
+                        const result = await response.json();
+                        tests.push(`${provider}: ${result.success ? '✅ 连接成功' : '❌ ' + result.error}`);
+                    } catch (error) {
+                        tests.push(`${provider}: ❌ 测试失败 - ${error.message}`);
+                    }
+                }
+            }
+            
+            if (tests.length === 0) {
+                showSettingsResult('⚠️ 没有配置任何 API keys');
+            } else {
+                showSettingsResult(`🧪 API 连接测试结果:\\n\\n${tests.join('\\n')}`);
+            }
+        }
+        
+        function clearApiSettings() {
+            if (confirm('确定要清除所有 API 设置吗？')) {
+                ['openai', 'deepseek', 'anthropic', 'gemini', 'pinataApiKey', 'pinataSecretKey'].forEach(key => {
+                    localStorage.removeItem(`api-${key}`);
+                });
+                loadApiSettings();
+                updateApiStatus();
+                showSettingsResult('🗑️ 所有 API 设置已清除');
+            }
+        }
+        
+        function showSettingsResult(message) {
+            document.getElementById('settingsResult').classList.remove('hidden');
+            document.getElementById('settingsOutput').textContent = message;
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPosts();
+            loadGithubSettings();
+            loadApiSettings();
+        });
+    </script>
+</body>
+</html> 

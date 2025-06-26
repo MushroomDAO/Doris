@@ -38,7 +38,7 @@ sleep 2
 
 # 启动Docsify服务器（后台运行）
 echo "启动Docsify服务器 (端口 3000)..."
-nohup pnpm run serve:docs > logs/docsify.log 2>&1 &
+nohup pnpm run serve:blog > logs/docsify.log 2>&1 &
 DOCSIFY_PID=$!
 
 # 等待服务启动
@@ -68,8 +68,8 @@ echo "🎉 Doris Protocol 启动完成!"
 echo ""
 echo "📋 服务地址："
 echo "  📖 博客访问：    http://localhost:3000"
-echo "  🎛️ 简单管理：    http://localhost:3001/admin.html"
-echo "  🚀 专业管理：    http://localhost:3001/admin-pro.html"
+echo "  🎛️ 简单管理：    http://localhost:3001/app/admin/admin.html"
+echo "  🚀 专业管理：    http://localhost:3001/app/admin/admin-pro.html"
 echo "  📊 API接口：     http://localhost:3001/api"
 echo ""
 echo "📁 日志文件："
@@ -86,7 +86,7 @@ if command -v open &> /dev/null; then
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         open http://localhost:3000
-        open http://localhost:3001/admin.html
+        open http://localhost:3001/app/admin/admin.html
     fi
 fi
 

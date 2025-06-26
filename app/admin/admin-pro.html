@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doris Protocol - AI Content Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.24.1/themes/prism-dark.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.24.1/components/prism-core.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.24.1/plugins/autoloader/prism-autoloader.min.js"></script>
+    <style>
+        /* Dark theme customizations */
+        :root {
+            --bg-dark: #1a202c;
+            --bg-card: #2d3748;
+            --text-primary: #f7fafc;
+            --text-secondary: #a0aec0;
+            --border-color: #4a5568;
+            --accent-purple: #805ad5;
+            --accent-blue: #3182ce;
+            --accent-green: #38a169;
+            --accent-pink: #d53f8c;
+        }
+        
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+        }
+        
+        .sidebar {
+            background: linear-gradient(180deg, #2d3748 0%, #1a202c 100%);
+            border-right: 1px solid var(--border-color);
+        }
+        
+        .nav-item {
+            transition: all 0.2s ease;
+            border-radius: 8px;
+            margin: 2px 0;
+        }
+        
+        .nav-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateX(4px);
+        }
+        
+        .nav-item.active {
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-blue));
+            color: white;
+        }
+        
+        .status-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .status-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .quick-action {
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, var(--bg-card), #374151);
+            border: 1px solid var(--border-color);
+        }
+        
+        .quick-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+        
+        .action-new { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .action-ai { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        .action-enhance { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+        .action-deploy { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+        
+        .status-ready {
+            color: #68d391;
+        }
+        
+        .status-icon {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        
+        .status-ready .status-icon {
+            background-color: #68d391;
+            box-shadow: 0 0 8px rgba(104, 211, 145, 0.6);
+        }
+        
+        .content-area {
+            background-color: var(--bg-dark);
+            min-height: 100vh;
+        }
+        
+        .main-content {
+            background: var(--bg-card);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .logo-area {
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .page-content {
+            display: none;
+        }
+        
+        .page-content.active {
+            display: block;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+        }
+        
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: var(--bg-card);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            max-width: 90vw;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="flex h-screen">
+        <!-- Left Sidebar -->
+        <div class="sidebar w-64 p-6 flex flex-col">
+            <!-- Logo Area -->
+            <div class="logo-area text-center">
+                <div class="flex items-center justify-center">
+                    <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center mr-3">
+                        <span class="text-purple-600 font-bold text-lg">D</span>
+                    </div>
+                    <div class="text-left">
+                        <h1 class="text-white font-bold text-lg">Doris Protocol</h1>
+                        <p class="text-purple-200 text-sm">AI Content Platform</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Navigation Menu -->
+            <nav class="flex-1">
+                <ul class="space-y-2">
+                    <li>
+                        <a href="#" class="nav-item active flex items-center p-3 text-white" data-page="dashboard">
+                            <span class="mr-3">🏠</span>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-item flex items-center p-3 text-gray-300 hover:text-white" data-page="ai-chat">
+                            <span class="mr-3">💬</span>
+                            <span>AI Chat Assistant</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-item flex items-center p-3 text-gray-300 hover:text-white" data-page="content">
+                            <span class="mr-3">✏️</span>
+                            <span>Content Creation</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-item flex items-center p-3 text-gray-300 hover:text-white" data-page="enhancement">
+                            <span class="mr-3">🪄</span>
+                            <span>AI Enhancement</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-item flex items-center p-3 text-gray-300 hover:text-white" data-page="deployment">
+                            <span class="mr-3">🌐</span>
+                            <span>Deployment</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <!-- API Status -->
+            <div class="border-t border-gray-600 pt-4 mt-4">
+                <div class="flex items-center text-sm">
+                    <span class="status-icon bg-green-400"></span>
+                    <span class="text-green-400 font-medium">API Connected</span>
+                </div>
+                <p class="text-gray-400 text-xs mt-1">DeepSeek AI Ready</p>
+            </div>
+        </div>
+        
+        <!-- Main Content Area -->
+        <div class="content-area flex-1 p-6">
+            <!-- Dashboard Page -->
+            <div id="dashboard" class="page-content active">
+                <!-- Header -->
+                <div class="mb-8">
+                    <h1 class="text-4xl font-bold text-white mb-2">Welcome to Doris Protocol</h1>
+                    <p class="text-gray-400 text-lg">Your AI-powered content creation platform</p>
+                </div>
+                
+                <!-- Status Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <!-- Total Posts Card -->
+                    <div class="status-card p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-white">Total Posts</h3>
+                            <span class="text-blue-400 text-2xl">📝</span>
+                        </div>
+                        <div class="text-3xl font-bold text-white mb-2" id="totalPosts">1</div>
+                        <p class="text-gray-400 text-sm">Published articles</p>
+                    </div>
+                    
+                    <!-- AI Services Card -->
+                    <div class="status-card p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-white">AI Services</h3>
+                            <span class="text-purple-400 text-2xl">🪄</span>
+                        </div>
+                        <div class="text-xl font-bold status-ready mb-2">
+                            <span class="status-icon"></span>Ready
+                        </div>
+                        <p class="text-gray-400 text-sm" id="aiServiceStatus">DeepSeek Connected</p>
+                    </div>
+                    
+                    <!-- IPFS Status Card -->
+                    <div class="status-card p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-white">IPFS Status</h3>
+                            <span class="text-green-400 text-2xl">🌍</span>
+                        </div>
+                        <div class="text-xl font-bold status-ready mb-2">
+                            <span class="status-icon"></span>Ready
+                        </div>
+                        <p class="text-gray-400 text-sm">Pinata Connected</p>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="mb-8">
+                    <h2 class="text-2xl font-semibold text-white mb-6">Quick Actions</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <button class="quick-action action-new p-6 text-white text-center hover:scale-105 transition-transform" onclick="showPage('content')">
+                            <span class="text-3xl mb-3 block">➕</span>
+                            <span class="font-semibold">New Post</span>
+                        </button>
+                        
+                        <button class="quick-action action-ai p-6 text-white text-center hover:scale-105 transition-transform" onclick="showPage('ai-chat')">
+                            <span class="text-3xl mb-3 block">💬</span>
+                            <span class="font-semibold">Ask AI</span>
+                        </button>
+                        
+                        <button class="quick-action action-enhance p-6 text-white text-center hover:scale-105 transition-transform" onclick="showPage('enhancement')">
+                            <span class="text-3xl mb-3 block">🪄</span>
+                            <span class="font-semibold">Enhance</span>
+                        </button>
+                        
+                        <button class="quick-action action-deploy p-6 text-white text-center hover:scale-105 transition-transform" onclick="showPage('deployment')">
+                            <span class="text-3xl mb-3 block">☁️</span>
+                            <span class="font-semibold">Deploy</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- AI Chat Assistant Page -->
+            <div id="ai-chat" class="page-content">
+                <div class="main-content p-8">
+                    <h1 class="text-3xl font-bold text-white mb-6">AI Chat Assistant</h1>
+                    
+                    <!-- AI Provider Selection -->
+                    <div class="mb-6">
+                        <label class="block text-white font-medium mb-2">AI Provider</label>
+                        <select id="aiProviderChat" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-purple-500">
+                            <option value="gemini" selected>Google Gemini</option>
+                            <option value="openai">OpenAI GPT-4</option>
+                            <option value="deepseek">DeepSeek (SiliconFlow)</option>
+                            <option value="anthropic">Anthropic Claude</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Chat Area -->
+                    <div class="bg-gray-700 rounded-lg p-6 h-96 overflow-y-auto mb-4" id="chatMessages">
+                        <div class="text-gray-400 text-center">
+                            Start a conversation with AI...
+                        </div>
+                    </div>
+                    
+                    <!-- Input Area -->
+                    <div class="flex gap-3">
+                        <input type="text" id="chatInput" placeholder="Ask AI anything..." 
+                               class="flex-1 p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-purple-500"
+                               onkeypress="if(event.key==='Enter') sendMessage()">
+                        <button onclick="sendMessage()" 
+                                class="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors">
+                            Send
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Content Creation Page -->
+            <div id="content" class="page-content">
+                <div class="main-content p-8">
+                    <h1 class="text-3xl font-bold text-white mb-6">Content Creation</h1>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label class="block text-white font-medium mb-2">Template Type</label>
+                            <select id="templateType" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-purple-500">
+                                <option value="daily">Daily Post</option>
+                                <option value="weekly">Weekly Summary</option>
+                                <option value="tech">Tech Article</option>
+                                <option value="thoughts">Random Thoughts</option>
+                                <option value="book-notes">Book Notes</option>
+                                <option value="project-update">Project Update</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-white font-medium mb-2">Title</label>
+                            <input type="text" id="postTitle" placeholder="Enter post title" 
+                                   class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-purple-500">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label class="block text-white font-medium mb-2">Content</label>
+                        <textarea id="postContent" rows="15" placeholder="Write your content here..." 
+                                  class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-purple-500"></textarea>
+                    </div>
+                    
+                    <div class="flex gap-3">
+                        <button onclick="generatePost()" 
+                                class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+                            Generate Template
+                        </button>
+                        <button onclick="savePost()" 
+                                class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors">
+                            Save Post
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- AI Enhancement Page -->
+            <div id="enhancement" class="page-content">
+                <div class="main-content p-8">
+                    <h1 class="text-3xl font-bold text-white mb-6">AI Enhancement</h1>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label class="block text-white font-medium mb-2">Select Post</label>
+                            <select id="enhancePostSelect" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-purple-500">
+                                <option value="">Loading posts...</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-white font-medium mb-2">AI Provider</label>
+                            <select id="aiProviderEnhance" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-purple-500">
+                                <option value="gemini" selected>Google Gemini</option>
+                                <option value="openai">OpenAI GPT-4</option>
+                                <option value="deepseek">DeepSeek (SiliconFlow)</option>
+                                <option value="anthropic">Anthropic Claude</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label class="block text-white font-medium mb-2">Enhancement Options</label>
+                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                            <label class="flex items-center text-white">
+                                <input type="checkbox" id="improveTitle" checked class="mr-2 text-purple-600 focus:ring-purple-500">
+                                <span>Improve Title</span>
+                            </label>
+                            <label class="flex items-center text-white">
+                                <input type="checkbox" id="addSummary" checked class="mr-2 text-purple-600 focus:ring-purple-500">
+                                <span>Add Summary</span>
+                            </label>
+                            <label class="flex items-center text-white">
+                                <input type="checkbox" id="generateTags" checked class="mr-2 text-purple-600 focus:ring-purple-500">
+                                <span>Generate Tags</span>
+                            </label>
+                            <label class="flex items-center text-white">
+                                <input type="checkbox" id="improveContent" class="mr-2 text-purple-600 focus:ring-purple-500">
+                                <span>Improve Content</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button onclick="enhanceContent()" 
+                            class="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors mb-6">
+                        🪄 Enhance with AI
+                    </button>
+                    
+                    <div id="enhanceResult" class="hidden bg-gray-700 rounded-lg p-6">
+                        <h3 class="text-lg font-medium text-white mb-3">Enhancement Result</h3>
+                        <div id="enhanceOutput" class="text-gray-300"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Deployment Page -->
+            <div id="deployment" class="page-content">
+                <div class="main-content p-8">
+                    <h1 class="text-3xl font-bold text-white mb-6">Deployment</h1>
+                    
+                    <!-- GitHub Settings -->
+                    <div class="mb-8 bg-gray-700 p-6 rounded-lg">
+                        <h3 class="text-lg font-semibold text-white mb-4">⚙️ GitHub Settings</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-white font-medium mb-2">GitHub Username</label>
+                                <input type="text" id="githubUsername" placeholder="your-username"
+                                       class="w-full p-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-purple-500">
+                            </div>
+                            <div>
+                                <label class="block text-white font-medium mb-2">Repository Name</label>
+                                <input type="text" id="githubRepo" placeholder="blog-repository"
+                                       class="w-full p-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-purple-500">
+                            </div>
+                            <div>
+                                <label class="block text-white font-medium mb-2">GitHub Token</label>
+                                <input type="password" id="githubToken" placeholder="ghp_xxxxxxxxxxxx"
+                                       class="w-full p-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-purple-500">
+                            </div>
+                            <div class="flex items-end">
+                                <button onclick="saveGithubSettings()" 
+                                        class="px-4 py-3 bg-gray-600 hover:bg-gray-500 text-white rounded-lg transition-colors">
+                                    💾 Save Settings
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Deployment Options -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="status-card p-6">
+                            <h3 class="text-lg font-semibold text-white mb-3">📄 GitHub Pages</h3>
+                            <p class="text-gray-400 mb-4">Create repository and deploy with GitHub API</p>
+                            <div class="space-y-2">
+                                <button onclick="createGitHubRepo()" 
+                                        class="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+                                    🆕 Create Repository
+                                </button>
+                                <button onclick="deployGitHub()" 
+                                        class="w-full px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors">
+                                    🚀 Deploy to GitHub
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="status-card p-6">
+                            <h3 class="text-lg font-semibold text-white mb-3">🌐 IPFS</h3>
+                            <p class="text-gray-400 mb-4">Decentralized deployment</p>
+                            <button onclick="deployIPFS()" 
+                                    class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors">
+                                Deploy to IPFS
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="deploymentStatus" class="mt-6 hidden bg-gray-700 rounded-lg p-6">
+                        <h3 class="text-lg font-medium text-white mb-3">Deployment Status</h3>
+                        <pre id="deployOutput" class="text-gray-300 text-sm whitespace-pre-wrap"></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Include Marked.js for Markdown rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <script>
+        // Navigation functionality
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Remove active class from all nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+            
+            // Add active class to corresponding nav item
+            document.querySelector(`[data-page="${pageId}"]`).classList.add('active');
+            
+            // Load specific page data
+            if (pageId === 'enhancement') {
+                loadPosts();
+            } else if (pageId === 'dashboard') {
+                loadDashboardData();
+            }
+        }
+        
+        // Event listeners for navigation
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                const pageId = item.getAttribute('data-page');
+                showPage(pageId);
+            });
+        });
+        
+        // AI Chat functionality
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message) return;
+            
+            const chatMessages = document.getElementById('chatMessages');
+            const provider = document.getElementById('aiProviderChat').value;
+            
+            // Add user message
+            chatMessages.innerHTML += `
+                <div class="mb-4">
+                    <div class="bg-purple-600 rounded-lg p-3 ml-auto max-w-xs text-white">
+                        ${message}
+                    </div>
+                </div>
+            `;
+            
+            input.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // Add loading message
+            chatMessages.innerHTML += `
+                <div class="mb-4" id="loadingMessage">
+                    <div class="bg-gray-600 rounded-lg p-3 mr-auto max-w-xs text-gray-300">
+                        AI is thinking...
+                    </div>
+                </div>
+            `;
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            try {
+                const response = await fetch('/api/ai-chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message, provider })
+                });
+                
+                const result = await response.json();
+                
+                // Remove loading message
+                document.getElementById('loadingMessage').remove();
+                
+                // Add AI response
+                chatMessages.innerHTML += `
+                    <div class="mb-4">
+                        <div class="bg-gray-600 rounded-lg p-3 mr-auto max-w-xs text-gray-100">
+                            ${result.response || 'Sorry, I encountered an error.'}
+                        </div>
+                    </div>
+                `;
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            } catch (error) {
+                document.getElementById('loadingMessage').remove();
+                chatMessages.innerHTML += `
+                    <div class="mb-4">
+                        <div class="bg-red-600 rounded-lg p-3 mr-auto max-w-xs text-white">
+                            Error: ${error.message}
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        
+        // Content creation functions (reuse from admin.html)
+        async function generatePost() {
+            const templateType = document.getElementById('templateType').value;
+            const title = document.getElementById('postTitle').value;
+            
+            try {
+                const response = await fetch('/api/generate-post', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ templateType, title })
+                });
+                
+                const result = await response.json();
+                document.getElementById('postContent').value = result.content;
+            } catch (error) {
+                alert('Error generating post: ' + error.message);
+            }
+        }
+        
+        async function savePost() {
+            const title = document.getElementById('postTitle').value;
+            const content = document.getElementById('postContent').value;
+            
+            if (!title || !content) {
+                alert('Please fill in both title and content');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/save-post', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, content })
+                });
+                
+                const result = await response.json();
+                alert('Post saved successfully!');
+                loadDashboardData(); // Refresh post count
+            } catch (error) {
+                alert('Error saving post: ' + error.message);
+            }
+        }
+        
+        // Enhancement functions (reuse from admin.html)
+        async function loadPosts() {
+            try {
+                const response = await fetch('/api/posts');
+                const posts = await response.json();
+                
+                const select = document.getElementById('enhancePostSelect');
+                select.innerHTML = '<option value="">Select a post...</option>';
+                posts.forEach(post => {
+                    const option = document.createElement('option');
+                    option.value = post.file;
+                    option.textContent = post.title;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading posts:', error);
+            }
+        }
+        
+        async function enhanceContent() {
+            const postFile = document.getElementById('enhancePostSelect').value;
+            const provider = document.getElementById('aiProviderEnhance').value;
+            
+            if (!postFile) {
+                alert('Please select a post to enhance');
+                return;
+            }
+            
+            const options = {
+                improveTitle: document.getElementById('improveTitle').checked,
+                addSummary: document.getElementById('addSummary').checked,
+                generateTags: document.getElementById('generateTags').checked,
+                improveContent: document.getElementById('improveContent').checked
+            };
+            
+            try {
+                document.getElementById('enhanceResult').classList.remove('hidden');
+                document.getElementById('enhanceOutput').textContent = 'Enhancing content...';
+                
+                const response = await fetch('/api/enhance-content', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ postFile, provider, options })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById('enhanceOutput').innerHTML = `
+                        <div class="text-green-400 font-medium mb-2">✅ Enhancement Completed</div>
+                        <div class="text-sm text-gray-400 mb-4">
+                            ${result.originalLength} → ${result.enhancedLength} characters (${result.provider})
+                        </div>
+                        <div class="bg-gray-800 p-4 rounded-lg">
+                            <pre class="text-sm whitespace-pre-wrap">${result.enhancedContent}</pre>
+                        </div>
+                    `;
+                } else {
+                    document.getElementById('enhanceOutput').textContent = 'Error: ' + (result.error || 'Unknown error');
+                }
+            } catch (error) {
+                document.getElementById('enhanceOutput').textContent = 'Error: ' + error.message;
+            }
+        }
+        
+        // Deployment functions (reuse from admin.html)
+        function saveGithubSettings() {
+            const username = document.getElementById('githubUsername').value;
+            const repo = document.getElementById('githubRepo').value;
+            const token = document.getElementById('githubToken').value;
+            
+            if (!username || !repo || !token) {
+                alert('Please fill in all GitHub settings');
+                return;
+            }
+            
+            localStorage.setItem('github-username', username);
+            localStorage.setItem('github-repo', repo);
+            localStorage.setItem('github-token', token);
+            
+            alert('GitHub settings saved successfully!');
+        }
+        
+        async function createGitHubRepo() {
+            const username = localStorage.getItem('github-username');
+            const repo = localStorage.getItem('github-repo');
+            const token = localStorage.getItem('github-token');
+            
+            if (!username || !repo || !token) {
+                alert('Please configure GitHub settings first');
+                return;
+            }
+            
+            try {
+                document.getElementById('deploymentStatus').classList.remove('hidden');
+                document.getElementById('deployOutput').textContent = 'Creating GitHub repository...';
+                
+                const response = await fetch('/api/create-github-repo', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, repo, token })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById('deployOutput').textContent = `✅ Repository created: ${result.repoUrl}`;
+                } else {
+                    document.getElementById('deployOutput').textContent = 'Error: ' + result.error;
+                }
+            } catch (error) {
+                document.getElementById('deployOutput').textContent = 'Error: ' + error.message;
+            }
+        }
+        
+        async function deployGitHub() {
+            const username = localStorage.getItem('github-username');
+            const repo = localStorage.getItem('github-repo');
+            const token = localStorage.getItem('github-token');
+            
+            if (!username || !repo || !token) {
+                alert('Please configure GitHub settings first');
+                return;
+            }
+            
+            try {
+                document.getElementById('deploymentStatus').classList.remove('hidden');
+                document.getElementById('deployOutput').textContent = 'Deploying to GitHub Pages...';
+                
+                const response = await fetch('/api/deploy-github', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, repo, token })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const githubPagesUrl = `https://${username}.github.io/${repo}`;
+                    document.getElementById('deployOutput').textContent = `✅ Deployed to: ${githubPagesUrl}`;
+                } else {
+                    document.getElementById('deployOutput').textContent = 'Error: ' + result.error;
+                }
+            } catch (error) {
+                document.getElementById('deployOutput').textContent = 'Error: ' + error.message;
+            }
+        }
+        
+        async function deployIPFS() {
+            try {
+                document.getElementById('deploymentStatus').classList.remove('hidden');
+                document.getElementById('deployOutput').textContent = 'Deploying to IPFS...';
+                
+                const response = await fetch('/api/deploy-ipfs', { method: 'POST' });
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById('deployOutput').textContent = `✅ IPFS deployment successful!\nHash: ${result.hash}`;
+                } else {
+                    document.getElementById('deployOutput').textContent = 'Error: ' + result.error;
+                }
+            } catch (error) {
+                document.getElementById('deployOutput').textContent = 'Error: ' + error.message;
+            }
+        }
+        
+        // Dashboard data loading
+        async function loadDashboardData() {
+            try {
+                const response = await fetch('/api/posts');
+                const posts = await response.json();
+                document.getElementById('totalPosts').textContent = posts.length;
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+            }
+        }
+        
+        // Load GitHub settings on page load
+        function loadGithubSettings() {
+            const username = localStorage.getItem('github-username');
+            const repo = localStorage.getItem('github-repo');
+            const token = localStorage.getItem('github-token');
+            
+            if (username) document.getElementById('githubUsername').value = username;
+            if (repo) document.getElementById('githubRepo').value = repo;
+            if (token) document.getElementById('githubToken').value = token;
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDashboardData();
+            loadGithubSettings();
+        });
+    </script>
+</body>
+</html>
