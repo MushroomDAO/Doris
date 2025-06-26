@@ -1,6 +1,6 @@
 {
   "name": "doris-protocol",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "A decentralized content creation and publishing platform",
   "main": "index.js",
   "type": "module",
@@ -41,6 +41,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.20.0",
     "@auth/core": "^0.34.2",
+    "@google/generative-ai": "^0.24.1",
     "@pinata/sdk": "^2.1.0",
     "auth": "^1.1.1",
     "axios": "^1.6.0",

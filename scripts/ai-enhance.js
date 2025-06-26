@@ -4,6 +4,7 @@ import glob from 'glob';
 import matter from 'gray-matter';
 import OpenAI from 'openai';
 import Anthropic from '@anthropic-ai/sdk';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import chalk from 'chalk';
 import ora from 'ora';
 import dotenv from 'dotenv';
@@ -13,21 +14,40 @@ dotenv.config();
 
 class AIEnhancer {
   constructor() {
-    // Support for custom OpenAI-compatible APIs (like DeepSeek via SiliconFlow)
-    const openaiConfig = {
-      apiKey: process.env.OPENAI_API_KEY
-    };
-    
-    // If custom API URL is provided, use it
-    if (process.env.API_URL) {
-      openaiConfig.baseURL = process.env.API_URL;
+    // OpenAI-compatible APIs (including DeepSeek via SiliconFlow)
+    this.openai = null;
+    if (process.env.OPENAI_API_KEY) {
+      const openaiConfig = {
+        apiKey: process.env.OPENAI_API_KEY
+      };
+      if (process.env.OPENAI_BASE_URL) {
+        openaiConfig.baseURL = process.env.OPENAI_BASE_URL;
+      }
+      this.openai = new OpenAI(openaiConfig);
     }
     
-    this.openai = new OpenAI(openaiConfig);
+    // DeepSeek via SiliconFlow
+    this.deepseek = null;
+    if (process.env.DEEPSEEK_API_KEY) {
+      this.deepseek = new OpenAI({
+        apiKey: process.env.DEEPSEEK_API_KEY,
+        baseURL: process.env.DEEPSEEK_BASE_URL || 'https://api.siliconflow.cn/v1'
+      });
+    }
     
-    this.anthropic = new Anthropic({
-      apiKey: process.env.ANTHROPIC_API_KEY
-    });
+    // Anthropic Claude
+    this.anthropic = null;
+    if (process.env.ANTHROPIC_API_KEY) {
+      this.anthropic = new Anthropic({
+        apiKey: process.env.ANTHROPIC_API_KEY
+      });
+    }
+    
+    // Google Gemini
+    this.gemini = null;
+    if (process.env.GEMINI_API_KEY) {
+      this.gemini = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    }
     
     this.config = this.loadConfig();
   }
@@ -60,22 +80,36 @@ class AIEnhancer {
     };
   }
 
-  async enhanceContent(content, type = 'enhance') {
-    const spinner = ora(`AI enhancing content (${type})...`).start();
+  async enhanceContent(content, type = 'enhance', provider = null) {
+    const selectedProvider = provider || this.config.aiProvider;
+    const spinner = ora(`AI enhancing content (${type}) using ${selectedProvider}...`).start();
     
     try {
       const prompt = this.config.prompts[type].replace('{content}', content);
       
       let result;
-      if (this.config.aiProvider === 'openai') {
-        result = await this.callOpenAI(prompt);
-      } else if (this.config.aiProvider === 'anthropic') {
-        result = await this.callAnthropic(prompt);
-      } else {
-        throw new Error('Unsupported AI provider');
+      switch (selectedProvider) {
+        case 'openai':
+          if (!this.openai) throw new Error('OpenAI API key not configured');
+          result = await this.callOpenAI(prompt);
+          break;
+        case 'deepseek':
+          if (!this.deepseek) throw new Error('DeepSeek API key not configured');
+          result = await this.callDeepSeek(prompt);
+          break;
+        case 'anthropic':
+          if (!this.anthropic) throw new Error('Anthropic API key not configured');
+          result = await this.callAnthropic(prompt);
+          break;
+        case 'gemini':
+          if (!this.gemini) throw new Error('Gemini API key not configured');
+          result = await this.callGemini(prompt);
+          break;
+        default:
+          throw new Error(`Unsupported AI provider: ${selectedProvider}`);
       }
       
-      spinner.succeed(`AI content enhancement completed (${type})`);
+      spinner.succeed(`AI content enhancement completed (${type}) using ${selectedProvider}`);
       return result;
     } catch (error) {
       spinner.fail(`AI content enhancement failed: ${error.message}`);
@@ -103,9 +137,29 @@ class AIEnhancer {
     return response.choices[0].message.content.trim();
   }
 
+  async callDeepSeek(prompt) {
+    const response = await this.deepseek.chat.completions.create({
+      model: process.env.DEEPSEEK_MODEL || 'deepseek-chat',
+      messages: [
+        {
+          role: 'system',
+          content: 'You are a professional blog content editor who excels at optimizing article content and generating metadata. Always respond in the same language as the input content.'
+        },
+        {
+          role: 'user',
+          content: prompt
+        }
+      ],
+      temperature: this.config.temperature,
+      max_tokens: this.config.maxTokens
+    });
+
+    return response.choices[0].message.content.trim();
+  }
+
   async callAnthropic(prompt) {
     const response = await this.anthropic.messages.create({
-      model: 'claude-3-sonnet-20240229',
+      model: process.env.ANTHROPIC_MODEL || 'claude-3-sonnet-20240229',
       max_tokens: this.config.maxTokens,
       messages: [
         {
@@ -116,6 +170,19 @@ class AIEnhancer {
     });
 
     return response.content[0].text.trim();
+  }
+
+  async callGemini(prompt) {
+    const model = this.gemini.getGenerativeModel({ 
+      model: process.env.GEMINI_MODEL || 'gemini-2.5-flash',
+      generationConfig: {
+        temperature: this.config.temperature,
+        maxOutputTokens: this.config.maxTokens,
+      }
+    });
+
+    const result = await model.generateContent(prompt);
+    return result.response.text().trim();
   }
 
   async processMarkdownFile(filePath) {

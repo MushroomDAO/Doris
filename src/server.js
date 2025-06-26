@@ -8,6 +8,7 @@ import OpenAI from 'openai';
 import Anthropic from '@anthropic-ai/sdk';
 import { PinataSDK } from 'pinata-web3';
 import dotenv from 'dotenv';
+import matter from 'gray-matter';
 
 // Load environment variables
 dotenv.config();
@@ -236,56 +237,206 @@ app.post('/api/save-post', async (req, res) => {
 // Enhance content with AI
 app.post('/api/enhance-content', async (req, res) => {
     try {
-        const { postFile, provider, options } = req.body;
+        const { postFile, provider = 'openai', options = {} } = req.body;
         
         if (!postFile) {
             return res.status(400).json({ error: 'Post file is required' });
         }
         
-        const filePath = path.join(getPostsDirectory(), postFile);
-        const content = await fs.readFile(filePath, 'utf-8');
-        
-        let enhancedContent = content;
-        
-        if (provider === 'openai' && openai) {
-            const prompt = createEnhancementPrompt(content, options);
-            
-            const completion = await openai.chat.completions.create({
-                model: "gpt-4",
-                messages: [{ role: "user", content: prompt }],
-                max_tokens: 2000
+        // Validate AI provider
+        const validProviders = ['openai', 'deepseek', 'anthropic', 'gemini'];
+        if (!validProviders.includes(provider)) {
+            return res.status(400).json({ 
+                error: `Invalid AI provider. Must be one of: ${validProviders.join(', ')}` 
             });
-            
-            enhancedContent = completion.choices[0].message.content;
-            
-        } else if (provider === 'anthropic' && anthropic) {
-            const prompt = createEnhancementPrompt(content, options);
-            
-            const message = await anthropic.messages.create({
-                model: "claude-3-sonnet-20240229",
-                max_tokens: 2000,
-                messages: [{ role: "user", content: prompt }]
-            });
-            
-            enhancedContent = message.content[0].text;
-        } else {
-            return res.status(400).json({ error: 'AI provider not configured or invalid' });
         }
         
-        // Save enhanced content
-        await fs.writeFile(filePath, enhancedContent, 'utf-8');
+        // Check if API keys are configured for the selected provider
+        const apiKeyMap = {
+            'openai': process.env.OPENAI_API_KEY,
+            'deepseek': process.env.DEEPSEEK_API_KEY,
+            'anthropic': process.env.ANTHROPIC_API_KEY,
+            'gemini': process.env.GEMINI_API_KEY
+        };
+        
+        if (!apiKeyMap[provider]) {
+            return res.status(400).json({ 
+                error: `${provider.toUpperCase()} API key not configured` 
+            });
+        }
+        
+        const filePath = path.join(getPostsDirectory(), postFile);
+        
+        // Check if file exists
+        if (!await fs.pathExists(filePath)) {
+            return res.status(404).json({ error: 'Post file not found' });
+        }
+        
+        // Read and parse the markdown file
+        const content = await fs.readFile(filePath, 'utf-8');
+        const parsed = matter(content);
+        
+        // Prepare enhancement prompt based on options
+        let enhancementPrompts = [];
+        
+        if (options.improveTitle) {
+            enhancementPrompts.push('Improve the title to be more engaging');
+        }
+        if (options.addSummary) {
+            enhancementPrompts.push('Add a concise summary at the beginning');
+        }
+        if (options.generateTags) {
+            enhancementPrompts.push('Generate relevant tags');
+        }
+        if (options.improveContent) {
+            enhancementPrompts.push('Improve content structure and clarity');
+        }
+        
+        if (enhancementPrompts.length === 0) {
+            return res.status(400).json({ error: 'No enhancement options selected' });
+        }
+        
+        const prompt = `Please enhance the following markdown content with these improvements: ${enhancementPrompts.join(', ')}.
+        
+Original content:
+${content}
+
+Please return only the enhanced markdown content without explanations.`;
+        
+        // Call the appropriate AI service
+        let enhancedContent;
+        
+        try {
+            switch (provider) {
+                case 'openai':
+                    enhancedContent = await callOpenAI(prompt);
+                    break;
+                case 'deepseek':
+                    enhancedContent = await callDeepSeek(prompt);
+                    break;
+                case 'anthropic':
+                    enhancedContent = await callAnthropic(prompt);
+                    break;
+                case 'gemini':
+                    enhancedContent = await callGemini(prompt);
+                    break;
+                default:
+                    throw new Error(`Unsupported provider: ${provider}`);
+            }
+        } catch (aiError) {
+            console.error(`AI API Error (${provider}):`, aiError);
+            return res.status(500).json({ 
+                error: `AI enhancement failed: ${aiError.message}`,
+                provider: provider,
+                details: aiError.response?.data || aiError.message
+            });
+        }
         
         res.json({ 
             success: true, 
             enhancedContent,
-            message: 'Content enhanced successfully' 
+            provider,
+            originalLength: content.length,
+            enhancedLength: enhancedContent.length
         });
         
     } catch (error) {
         console.error('Error enhancing content:', error);
-        res.status(500).json({ error: 'Failed to enhance content: ' + error.message });
+        res.status(500).json({ 
+            error: 'Failed to enhance content: ' + error.message,
+            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        });
     }
 });
+
+// AI service functions
+async function callOpenAI(prompt) {
+    const OpenAI = (await import('openai')).default;
+    const openai = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY,
+        baseURL: process.env.OPENAI_BASE_URL
+    });
+    
+    const response = await openai.chat.completions.create({
+        model: process.env.OPENAI_MODEL || 'gpt-4',
+        messages: [
+            {
+                role: 'system',
+                content: 'You are a professional blog content editor. Always respond in the same language as the input content.'
+            },
+            {
+                role: 'user',
+                content: prompt
+            }
+        ],
+        temperature: 0.7,
+        max_tokens: 2000
+    });
+
+    return response.choices[0].message.content.trim();
+}
+
+async function callDeepSeek(prompt) {
+    const OpenAI = (await import('openai')).default;
+    const deepseek = new OpenAI({
+        apiKey: process.env.DEEPSEEK_API_KEY,
+        baseURL: process.env.DEEPSEEK_BASE_URL || 'https://api.siliconflow.cn/v1'
+    });
+    
+    const response = await deepseek.chat.completions.create({
+        model: process.env.DEEPSEEK_MODEL || 'deepseek-chat',
+        messages: [
+            {
+                role: 'system',
+                content: 'You are a professional blog content editor. Always respond in the same language as the input content.'
+            },
+            {
+                role: 'user',
+                content: prompt
+            }
+        ],
+        temperature: 0.7,
+        max_tokens: 2000
+    });
+
+    return response.choices[0].message.content.trim();
+}
+
+async function callAnthropic(prompt) {
+    const Anthropic = (await import('@anthropic-ai/sdk')).default;
+    const anthropic = new Anthropic({
+        apiKey: process.env.ANTHROPIC_API_KEY
+    });
+    
+    const response = await anthropic.messages.create({
+        model: process.env.ANTHROPIC_MODEL || 'claude-3-sonnet-20240229',
+        max_tokens: 2000,
+        messages: [
+            {
+                role: 'user',
+                content: prompt
+            }
+        ]
+    });
+
+    return response.content[0].text.trim();
+}
+
+async function callGemini(prompt) {
+    const { GoogleGenerativeAI } = await import('@google/generative-ai');
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    
+    const model = genAI.getGenerativeModel({ 
+        model: process.env.GEMINI_MODEL || 'gemini-2.5-flash',
+        generationConfig: {
+            temperature: 0.7,
+            maxOutputTokens: 2000,
+        }
+    });
+
+    const result = await model.generateContent(prompt);
+    return result.response.text().trim();
+}
 
 // Deploy to GitHub Pages
 app.post('/api/deploy-github', async (req, res) => {
@@ -413,28 +564,6 @@ app.delete('/api/delete-post', async (req, res) => {
 });
 
 // Helper functions
-function createEnhancementPrompt(content, options) {
-    let prompt = "Please enhance the following markdown content:\n\n" + content + "\n\n";
-    prompt += "Enhancement requirements:\n";
-    
-    if (options.improveTitle) {
-        prompt += "- Improve the title to be more engaging and SEO-friendly\n";
-    }
-    if (options.addSummary) {
-        prompt += "- Add a concise summary at the beginning\n";
-    }
-    if (options.generateTags) {
-        prompt += "- Generate relevant tags for the content\n";
-    }
-    if (options.improveContent) {
-        prompt += "- Improve the content structure, clarity, and readability\n";
-    }
-    
-    prompt += "\nPlease return only the enhanced markdown content without any explanations.";
-    
-    return prompt;
-}
-
 async function updateSidebar() {
     try {
         const posts = [];

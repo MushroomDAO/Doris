@@ -1,1 +1,3 @@
-docsify serve .
+docsify serve . --open
+
+pnpm run dev

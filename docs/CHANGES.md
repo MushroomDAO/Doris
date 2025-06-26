@@ -588,6 +588,7 @@ pnpm run deploy:ipfs
 5. ✅ Performance optimization
 6. ✅ Template repository creation
 7. ✅ Release deployment 
+
 ## Version 0.2.0 - Web Interface & Architecture Update (2024-12-26)
 
 ### 🎨 Major New Features
@@ -645,4 +646,86 @@ Users upgrading from v0.1.0:
 2. Copy `.env.example` to `.env` and configure
 3. Use `pnpm run dev` for the new web interface
 4. All existing CLI commands remain functional
+
+## Version 0.0.11 (2024-12-27)
+
+### 🚀 Major Features
+
+- **一键启动脚本**: 新增 `start.sh` 和 `stop.sh` 脚本
+  - 自动安装依赖和配置系统参数
+  - 同时启动Express和Docsify服务器
+  - 解决EMFILE文件监控错误
+  - 服务状态检查和PID管理
+  - 可选的自动浏览器打开
+
+- **多AI提供商支持**: 全面支持4大AI服务
+  - **DeepSeek**: 通过SiliconFlow API，性价比最高
+  - **Google Gemini**: 支持gemini-2.5-flash模型，免费额度大
+  - **OpenAI**: GPT-4完整支持，质量最佳
+  - **Anthropic**: Claude-3-sonnet支持
+
+- **完整中文文档**: 创建详细的使用说明
+  - **README.md**: 英文版快速开始指南
+  - **README_CN.md**: 完整中文使用手册
+  - 普通用户5分钟快速体验流程
+  - 技术用户完整配置指南
+  - Web界面使用指南和故障排除
+
+### 🔧 Technical Improvements
+
+- **AI增强API重构**: 完全重写 `/api/enhance-content` 端点
+  - 支持4种AI提供商动态切换
+  - 增强的错误处理和状态检查
+  - API密钥验证和提供商验证
+  - 结构化的增强选项支持
+  - 详细的错误响应和调试信息
+
+- **Web界面增强**: 更新管理界面AI选项
+  - admin.html 添加DeepSeek和Gemini选项
+  - admin-pro.html 同步更新AI提供商选择
+  - 实时提供商状态显示
+
+- **依赖管理**: 
+  - 添加 `@google/generative-ai` 支持
+  - 更新 `gray-matter` 依赖
+  - 环境变量配置标准化
+
+### 🌐 Docsify插件确认
+
+确认已正确安装并配置的插件：
+- ✅ **docsify-search**: 内容搜索功能
+- ✅ **docsify-copy-code**: 代码复制功能  
+- ✅ **docsify-pagination**: 文章分页导航
+- ✅ **docsify-tabs**: 标签页内容组织
+- ✅ **Prism.js**: 语法高亮支持
+
+### 🛠️ Bug Fixes
+
+- **修复AI增强400错误**: 重构API调用逻辑解决状态码错误
+- **解决EMFILE错误**: 在启动脚本中设置文件描述符限制
+- **API密钥验证**: 添加完整的API密钥存在性和有效性检查
+- **错误处理改进**: 更详细的错误信息和调试支持
+
+### 📋 Documentation
+
+- **Quick Start指南**: 普通用户和技术用户分别的快速开始
+- **API使用示例**: 完整的curl命令和使用案例
+- **故障排除**: 常见问题和解决方案
+- **环境配置**: 详细的.env配置说明
+- **Web界面指南**: 完整的界面使用教程
+
+### 🧪 Testing
+
+- **手动测试**: 验证一键启动脚本功能
+- **API测试**: 确认所有AI提供商接口正常
+- **Web界面测试**: 验证管理界面功能完整性
+- **依赖测试**: 确认所有新依赖正确安装
+
+### 📊 Performance
+
+- **启动优化**: 一键脚本显著减少手动配置时间
+- **错误处理**: 更快的错误识别和恢复
+- **多AI支持**: 用户可根据需求选择最合适的AI服务
+
+---
 
