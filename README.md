@@ -1,5 +1,6 @@
 # 🚀 Doris Protocol - 去中心化内容创作平台
 
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 > **Local First • AI Enhanced • IPFS Powered**
 
 一个融合传统博客功能与Web3经济学的去中心化内容创作和发布平台。
